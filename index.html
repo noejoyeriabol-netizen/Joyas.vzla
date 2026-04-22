@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lumière Joyería</title>
+    <link rel="preload" as="image" href="https://i.ibb.co/Q3Pxwy2F/1776518522087.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/YTwHmdbY/1776483216391.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/wh3mrLK5/1776483378102.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/Nd63qRV4/1776483557777.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* Variables */
+        :root {
+            --bone-white: #F9F8F6;
+            --pearl: #EAE6DF;
+            --beige: #F5F1E7;
+            --gold-border: #D4AF37;
+            --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            --text-dark: #2C2A25;
+            --text-light: #6B6861;
+            --ios-radius: 20px;
+            --ios-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --spring-transition: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bone-white);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .price {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            position: relative;
+            padding: 60px 20px 100px;
+            text-align: center;
+            color: var(--text-dark);
+            isolation: isolate;
+            background-color: var(--bone-white);
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px) brightness(1.1);
+            transform: scale(1.05);
+        }
+
+        /* Degradado de conexión con la sección inferior */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(to bottom, transparent 0%, var(--bone-white) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Contenido del hero sobre el fondo */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-gallery {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            height: 220px;
+        }
+
+        /* Estilo base para imágenes reales */
+        .img-jewelry {
+            background-color: var(--pearl);
+            border-radius: var(--ios-radius);
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        /* --- EFECTO PREMIUM PARA LAS IMÁGENES DEL HERO --- */
+        .hero-gallery .img-jewelry {
+            border: 2px solid rgba(255, 255, 255, 0.8); 
+            background-color: #FFFFFF; 
+            border-radius: 24px; 
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.08),
+                0 20px 40px rgba(0, 0, 0, 0.12);
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s ease;
+        }
+
+        /* Tarjetas laterales */
+        .hero-card-side {
+            width: 95px;
+            height: 145px;
+            opacity: 0.85;
+            z-index: 1;
+        }
+
+        /* Inclinación de las cartas laterales */
+        .hero-card-side:first-child {
+            transform: rotate(-6deg) translateX(15px) translateY(10px);
+        }
+
+        .hero-card-side:last-child {
+            transform: rotate(6deg) translateX(-15px) translateY(10px);
+        }
+
+        /* Tarjeta central (Protagonista) */
+        .hero-card-center {
+            width: 130px;
+            height: 200px;
+            z-index: 3;
+            border: 3px solid #FFFFFF; 
+            transform: scale(1.1) translateY(-15px); 
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.15),
+                0 8px 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .hero-card-center:hover {
+            transform: scale(1.15) translateY(-20px);
+            box-shadow: 
+                0 20px 45px rgba(0, 0, 0, 0.2),
+                0 10px 30px rgba(212, 175, 55, 0.25);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.8);
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .btn-gold {
+            background: var(--gold-gradient);
+            color: #1A1A1A;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(191, 149, 63, 0.5);
+            transition: transform 0.2s var(--spring-transition);
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+        .btn-gold:active { transform: scale(0.95); }
+
+        /* --- DESTACADOS --- */
+        .bestsellers {
+            padding: 40px 20px;
+            background: var(--bone-white);
+            position: relative;
+            z-index: 2;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .grid-products {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--ios-radius);
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: var(--ios-shadow);
+            transition: transform 0.2s;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 140px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            object-fit: cover;
+        }
+
+        .product-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--gold-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-outline:active { background: var(--pearl); }
+
+        /* --- TESTIMONIOS CON AVATAR --- */
+        .testimonials {
+            padding: 0 20px 40px;
+        }
+        .review-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--ios-radius);
+            margin-bottom: 15px;
+            border: 1px solid var(--pearl);
+            box-shadow: var(--ios-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .review-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--gold-border);
+            background: var(--pearl);
+        }
+        .review-info {
+            flex: 1;
+        }
+        .review-stars {
+            color: #D4AF37;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+        .review-author {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .review-text {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--text-light);
+            line-height: 1.4;
+            margin-top: 8px;
+        }
+
+        /* --- CONTACTO --- */
+        .contact-section {
+            padding: 20px 20px 50px;
+            text-align: center;
+            background: var(--beige);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+        .contact-info {
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            display: block;
+            text-decoration: none;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 100;
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s var(--spring-transition);
+            display: flex; align-items: flex-end;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--bone-white);
+            width: 100%; height: 85vh;
+            border-top-left-radius: 30px; border-top-right-radius: 30px;
+            padding: 25px 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s var(--spring-transition);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .modal-handle { width: 40px; height: 5px; background: #ccc; border-radius: 10px; margin: 0 auto 20px; }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: var(--pearl); border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: var(--text-dark); cursor: pointer; }
+
+        .modal-img {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--ios-radius);
+            margin-bottom: 25px;
+            border: 1px solid var(--gold-border);
+            object-fit: cover;
+        }
+
+        .modal-title { font-size: 1.8rem; margin-bottom: 10px; }
+        .modal-desc { font-size: 0.95rem; line-height: 1.6; color: var(--text-light); margin-bottom: 25px; }
+
+        .price-container {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px dashed var(--gold-border);
+            text-align: center;
+        }
+        .price-old { text-decoration: line-through; color: #999; font-size: 1rem; margin-right: 10px; font-family: 'Inter', sans-serif;}
+        .price-current { font-size: 2.2rem; color: var(--text-dark); }
+        .urgency-tag { display: block; font-size: 0.8rem; color: #D4AF37; font-weight: 600; margin-top: 8px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <div class="hero-background">
+            <img src="https://i.ibb.co/Q3Pxwy2F/1776518522087.png" alt="Fondo joyería" loading="eager">
+        </div>
+        <div class="hero-content">
+            <div class="hero-gallery">
+                <img src="https://i.ibb.co/wh3mrLK5/1776483378102.png" alt="Joyas laterales" class="img-jewelry hero-card-side" loading="eager">
+                <img src="https://i.ibb.co/YTwHmdbY/1776483216391.png" alt="Joyas principales" class="img-jewelry hero-card-center" loading="eager">
+                <img src="https://i.ibb.co/Nd63qRV4/1776483557777.png" alt="Joyas laterales" class="img-jewelry hero-card-side" loading="eager">
+            </div>
+            <h1 class="hero-title">Forjado para la eternidad. Diseñado para la elegancia.</h1>
+            <p class="hero-subtitle">Lumière – El brillo de los momentos que duran para siempre.</p>
+            <button class="btn-gold">Explorar Colección</button>
+        </div>
+    </section>
+
+    <section class="bestsellers">
+        <h2 class="section-title">Más Vendidos</h2>
+        <div class="grid-products">
+            <div class="product-card">
+                <img src="https://i.ibb.co/VYQR4xgK/1776519561301.png" alt="Anillo Étoile" class="img-jewelry product-img" loading="lazy">
+                <div class="product-name">Anillo Étoile</div>
+                <button class="btn-outline" onclick="openModal('Anillo Étoile', 'Un solitario cautivador con un diamante de corte brillante, engastado en oro blanco de 18k. Su diseño minimalista realza la luz natural de la piedra.', '$2,450', '$1,890', 'https://i.ibb.co/VYQR4xgK/1776519561301.png')">Ver más...</button>
+            </div>
+            <div class="product-card">
+                <img src="https://i.ibb.co/DfCWg4qb/1776519764185.png" alt="Collar Aurelia" class="img-jewelry product-img" loading="lazy">
+                <div class="product-name">Collar Aurelia</div>
+                <button class="btn-outline" onclick="openModal('Collar Aurelia', 'Fina cadena de oro amarillo que sostiene un colgante de zafiro azul rodeado de diamantes.', '$1,100', '$899', 'https://i.ibb.co/DfCWg4qb/1776519764185.png')">Ver más...</button>
+            </div>
+            <div class="product-card">
+                <img src="https://i.ibb.co/xK0mqZ6b/1776520106110.png" alt="Pulsera Soleil" class="img-jewelry product-img" loading="lazy">
+                <div class="product-name">Pulsera Soleil</div>
+                <button class="btn-outline" onclick="openModal('Pulsera Soleil', 'Brazalete rígido con acabado texturizado que refleja la luz como los rayos del sol.', '$850', '$650', 'https://i.ibb.co/xK0mqZ6b/1776520106110.png')">Ver más...</button>
+            </div>
+            <div class="product-card">
+                <img src="https://i.ibb.co/whN621gv/1776520309882.png" alt="Pendientes Lume" class="img-jewelry product-img" loading="lazy">
+                <div class="product-name">Pendientes Lume</div>
+                <button class="btn-outline" onclick="openModal('Pendientes Lume', 'Pendientes en forma de gota con incrustaciones de esmeraldas colombianas.', '$1,600', '$1,299', 'https://i.ibb.co/whN621gv/1776520309882.png')">Ver más...</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <h2 class="section-title">Voces de Elegancia</h2>
+        
+        <div class="review-card">
+            <div class="review-header">
+                <img src="https://i.pravatar.cc/100?img=47" alt="Sofía M." class="review-avatar" loading="lazy">
+                <div class="review-info">
+                    <div class="review-stars">★★★★★</div>
+                    <span class="review-author">Sofía M.</span>
+                </div>
+            </div>
+            <p class="review-text">"El collar Aurelia superó mis expectativas. El nivel de detalle y el brillo de la joya se ven aún mejor en persona."</p>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <img src="https://i.pravatar.cc/100?img=12" alt="Carlos T." class="review-avatar" loading="lazy">
+                <div class="review-info">
+                    <div class="review-stars">★★★★★</div>
+                    <span class="review-author">Carlos T.</span>
+                </div>
+            </div>
+            <p class="review-text">"Compré el anillo de compromiso aquí. El servicio fue impecable y el diamante tiene una claridad espectacular."</p>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <h2 class="section-title">Visítanos</h2>
+        <p class="contact-info">Estaremos encantados de asesorarte en nuestra boutique o a través de nuestros canales digitales.</p>
+        
+        <a href="#" class="btn-whatsapp">Contactar por WhatsApp</a>
+        <button class="btn-outline" style="max-width: 100%; width: auto; padding: 14px 32px; border-radius: 30px;">📍 Ver ubicación en el mapa</button>
+    </section>
+
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <button class="close-btn" onclick="closeModal(event)">✕</button>
+            <img id="modalMainImage" src="" alt="Producto" class="img-jewelry modal-img">
+            <h2 class="modal-title" id="modalTitle">Nombre</h2>
+            <p class="modal-desc" id="modalDesc">Descripción</p>
+            <div class="price-container">
+                <p>
+                    <span class="price-old" id="modalOldPrice">$000</span> 
+                    <span class="price price-current" id="modalCurrentPrice">$000</span>
+                </p>
+                <span class="urgency-tag">Ahorras hoy. Solo 2 piezas en stock.</span>
+            </div>
+            <button class="btn-gold" style="width: 100%; margin-top: 20px;">Añadir al carrito</button>
+        </div>
+    </div>
+
+    <script>
+        const modalOverlay = document.getElementById('productModal');
+        
+        function openModal(title, desc, oldPrice, currentPrice, imgSrc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalOldPrice').innerText = oldPrice;
+            document.getElementById('modalCurrentPrice').innerText = currentPrice;
+            document.getElementById('modalMainImage').src = imgSrc;
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+            if(e) e.preventDefault();
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
