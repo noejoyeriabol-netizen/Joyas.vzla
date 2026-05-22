@@ -26,30 +26,35 @@ jobs:
       - name: 🤖 Configurar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: 📄 Crear package.json temporal
-        run: npm init -y
+      # 📦 Como ya tienes un package.json en tu repo, solo instalamos lo que dice ahí
+      # y agregamos la herramienta de íconos.
+      - name: 📦 Instalar dependencias
+        run: |
+          npm install
+          npm install @capacitor/assets
 
-      - name: 📦 Instalar dependencias de Capacitor
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
-
+      # 🛠️ Inicializamos la configuración usando tu carpeta 'www' y creamos la plataforma Android
       - name: 🛠️ Inicializar Capacitor y agregar Android
         run: |
           npx cap init "Noelu Ventas" "com.noelu.ventas" --web-dir=www
           npx cap add android
 
-      # 🔑 PASO CLAVE: Generar íconos DESPUÉS de agregar Android y apuntando a la carpeta "resources"
+      # 🎨 Generamos los íconos (leerá automáticamente de tu carpeta 'assets')
       - name: 🎨 Generar íconos de la app
-        run: npx @capacitor/assets generate --assetPath resources --iconBackgroundColor '#e8ddf2' --iconBackgroundColorDark '#4a4458'
+        run: npx @capacitor/assets generate --iconBackgroundColor '#e8ddf2' --iconBackgroundColorDark '#4a4458'
 
+      # 📂 Inyectamos tu código de la carpeta www hacia la app de Android
       - name: 📂 Sincronizar archivos web
         run: npx cap sync android
 
+      # 🔨 Compilamos el APK
       - name: 🔨 Construir APK (debug)
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      # 📦 Guardamos el APK generado
       - name: 📦 Subir APK como artefacto
         uses: actions/upload-artifact@v4
         with:
