@@ -343,7 +343,9 @@
                 cloudLabel.textContent = label;
             }
 
-            // ============ SINCRONIZACIÓN SUPABASE ============
+            // ============ SINCRONIZACIÓN SUPABASE (SEGURA) ============
+            
+            // Descarga los datos de la nube al iniciar
             async function sincronizarNube() {
                 setCloudStatus('syncing', 'Conectando...');
                 try {
@@ -373,52 +375,20 @@
                 }
             }
 
+            // Sube todo masivamente (Usado principalmente al importar un JSON)
             async function subirANube() {
+                if (ventas.length === 0) return;
                 setCloudStatus('syncing', 'Guardando...');
                 try {
-                    // Obtener IDs en la nube
-                    const { data: cloudData, error: readError } = await supabase
-                        .from('ventas')
-                        .select('id');
-
-                    if (readError) throw readError;
-
-                    const cloudIds = new Set((cloudData || []).map(v => v.id));
-                    const localIds = new Set(ventas.map(v => v.id));
-
-                    // Eliminar los que ya no están localmente
-                    const idsToDelete = [...cloudIds].filter(id => !localIds.has(id));
-                    if (idsToDelete.length > 0) {
-                        const { error: deleteError } = await supabase
-                            .from('ventas')
-                            .delete()
-                            .in('id', idsToDelete);
-                        if (deleteError) throw deleteError;
-                    }
-
-                    // Insertar los nuevos (no presentes en la nube)
-                    for (const venta of ventas) {
-                        if (!cloudIds.has(venta.id)) {
-                            const { error: insertError } = await supabase
-                                .from('ventas')
-                                .insert({
-                                    id: venta.id,
-                                    producto: venta.producto,
-                                    categoria: venta.categoria,
-                                    precio: venta.precio,
-                                    cantidad: venta.cantidad,
-                                    fecha: venta.fecha
-                                });
-                            if (insertError) throw insertError;
-                        }
-                    }
-
+                    // upsert actualiza o inserta, pero NUNCA borra, lo cual protege tus datos
+                    const { error } = await supabase.from('ventas').upsert(ventas);
+                    if (error) throw error;
                     setCloudStatus('online', 'Conectado');
                     return true;
                 } catch (e) {
                     console.error('Error al guardar en Supabase:', e.message);
                     setCloudStatus('offline', 'Error al guardar');
-                    mostrarToast('⚠️ No se pudo sincronizar con Supabase', 'error');
+                    mostrarToast('⚠️ No se pudo guardar en la nube', 'error');
                     return false;
                 }
             }
@@ -465,14 +435,24 @@
                     fecha
                 };
 
+                // Guardar local
                 ventas.unshift(nuevaVenta);
                 guardarDatos();
-                await subirANube();
+                
                 renderizarTabla(true);
                 actualizarKPIs();
                 renderizarGrafica();
-                mostrarToast('✅ Venta registrada con éxito!', 'success');
 
+                // Guardar directo en la nube individualmente
+                setCloudStatus('syncing', 'Guardando...');
+                try {
+                    await supabase.from('ventas').insert(nuevaVenta);
+                    setCloudStatus('online', 'Conectado');
+                } catch(e) {
+                    setCloudStatus('offline', 'Error de red');
+                }
+                
+                mostrarToast('✅ Venta registrada con éxito!', 'success');
                 formVenta.reset();
                 inputFecha.value = new Date().toISOString().split('T')[0];
                 inputCantidad.value = '1';
@@ -482,24 +462,46 @@
 
             async function eliminarVenta(id) {
                 if (!confirm('¿Eliminar esta venta?')) return;
+                
+                // Borrar en local
                 ventas = ventas.filter(v => v.id !== id);
                 guardarDatos();
-                await subirANube();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
+
+                // Borrar directo en la nube individualmente
+                setCloudStatus('syncing', 'Borrando...');
+                try {
+                    await supabase.from('ventas').delete().eq('id', id);
+                    setCloudStatus('online', 'Conectado');
+                } catch(e) {
+                    setCloudStatus('offline', 'Error al borrar');
+                }
+
                 mostrarToast('🗑️ Venta eliminada.', 'error');
             }
 
             async function limpiarDatos() {
                 if (ventas.length === 0) { mostrarToast('No hay datos.', 'error'); return; }
                 if (!confirm(`¿Eliminar TODOS los registros (${ventas.length})?`)) return;
+                
+                const idsParaBorrar = ventas.map(v => v.id);
                 ventas = [];
                 guardarDatos();
-                await subirANube();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
+
+                // Borrar en masa directo en la nube
+                setCloudStatus('syncing', 'Limpiando...');
+                try {
+                    await supabase.from('ventas').delete().in('id', idsParaBorrar);
+                    setCloudStatus('online', 'Conectado (vacía)');
+                } catch(e) {
+                    setCloudStatus('offline', 'Error al limpiar');
+                }
+
                 mostrarToast('🧹 Todos los registros eliminados.', 'error');
             }
 
@@ -659,13 +661,18 @@
                         const valid = data.filter(v=>v&&v.producto&&v.precio!=null&&v.cantidad!=null&&v.fecha);
                         if (!valid.length) throw new Error('Sin registros válidos.');
                         if (!confirm(`¿Reemplazar con ${valid.length} registros?`)) return;
+                        
                         ventas = valid.map(v=>({...v, id:v.id||Date.now(), total:v.total||Math.round(v.precio*v.cantidad*100)/100, categoria:v.categoria||'camisetas'}));
                         guardarDatos();
-                        await subirANube();
+                        
                         renderizarTabla();
                         actualizarKPIs();
                         renderizarGrafica();
                         mostrarToast(`📥 ${ventas.length} registros importados.`, 'success');
+
+                        // Subimos la data importada a Supabase
+                        await subirANube();
+
                     } catch(err) { mostrarToast('❌ '+err.message, 'error'); }
                 };
                 reader.readAsText(file);
@@ -725,7 +732,7 @@
             init();
 
             setInterval(() => { actualizarKPIs(); renderizarGrafica(); }, 60000);
-            console.log('🌸 Noelu Ventas – Supabase sincronizado');
+            console.log('🌸 Noelu Ventas – Supabase sincronizado (Seguro)');
         })();
     </script>
 </body>
