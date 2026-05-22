@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>🌸 Noelu Ventas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg: #f9f6f3;
@@ -35,11 +35,7 @@
             --offline: #d0858b;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -52,131 +48,44 @@
             color: var(--text);
             padding: 16px;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.92); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes floatUp {
-            0%   { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-60px) scale(1.1); }
-        }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(201, 184, 212, 0.5); }
-            50%      { box-shadow: 0 0 0 14px rgba(201, 184, 212, 0); }
-        }
-        @keyframes rowHighlight {
-            0%   { background: #f3ecf9; }
-            100% { background: transparent; }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.1); } }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(201, 184, 212, 0.5); } 50% { box-shadow: 0 0 0 14px rgba(201, 184, 212, 0); } }
+        @keyframes rowHighlight { 0% { background: #f3ecf9; } 100% { background: transparent; } }
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
+        .container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 
-        /* Header */
         .header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            background: var(--card);
-            border-radius: var(--radius-lg);
-            padding: 18px 24px;
-            box-shadow: var(--shadow);
-            animation: fadeInUp 0.5s ease forwards;
-            border: 1px solid var(--border);
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+            background: var(--card); border-radius: var(--radius-lg); padding: 18px 24px;
+            box-shadow: var(--shadow); animation: fadeInUp 0.5s ease forwards; border: 1px solid var(--border);
         }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
         .logo-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
+            width: 44px; height: 44px; border-radius: 14px;
             background: linear-gradient(135deg, var(--lavender-light), var(--rose-light));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: var(--shadow-sm);
+            display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: var(--shadow-sm);
         }
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            color: var(--text);
-            white-space: nowrap;
-        }
-        .header-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .header-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
+        .header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); white-space: nowrap; }
+        .header-subtitle { font-size: 0.8rem; color: var(--text-light); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .header-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-        /* Indicador de nube */
         .cloud-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: #f4f1f8;
-            color: var(--text-light);
-            transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600; background: #f4f1f8; color: var(--text-light); transition: var(--transition);
         }
-        .cloud-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #ccc;
-            transition: background 0.3s;
-        }
-        .cloud-dot.online  { background: var(--online); box-shadow: 0 0 8px rgba(111, 191, 139, 0.6); }
+        .cloud-dot { width: 9px; height: 9px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
+        .cloud-dot.online { background: var(--online); box-shadow: 0 0 8px rgba(111, 191, 139, 0.6); }
         .cloud-dot.offline { background: var(--offline); box-shadow: 0 0 8px rgba(208, 133, 139, 0.6); }
         .cloud-dot.syncing { background: #e5c687; animation: pulse 1.2s infinite; }
 
-        /* Botones */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 10px 18px;
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: -0.2px;
-            transition: var(--transition);
-            white-space: nowrap;
-            font-family: inherit;
-            position: relative;
-            overflow: hidden;
+            display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 30px; border: none;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600; letter-spacing: -0.2px; transition: var(--transition);
+            white-space: nowrap; font-family: inherit; position: relative; overflow: hidden;
         }
         .btn:active { transform: scale(0.96); }
         .btn-export { background: var(--sky-light); color: #4a6d8c; }
@@ -184,11 +93,8 @@
         .btn-import { background: var(--mint-light); color: #4a7d6a; }
         .btn-import:hover { background: #c8f0db; box-shadow: 0 4px 16px rgba(150, 210, 180, 0.3); transform: translateY(-2px); }
         .btn-add {
-            background: linear-gradient(135deg, #c9b8d4, #d4c4de);
-            color: #fff;
-            box-shadow: 0 4px 14px rgba(180, 160, 200, 0.35);
-            font-weight: 700;
-            padding: 11px 22px;
+            background: linear-gradient(135deg, #c9b8d4, #d4c4de); color: #fff;
+            box-shadow: 0 4px 14px rgba(180, 160, 200, 0.35); font-weight: 700; padding: 11px 22px;
         }
         .btn-add:hover { box-shadow: 0 6px 22px rgba(180, 160, 200, 0.5); transform: translateY(-2px); }
         .btn-delete { background: var(--rose-light); color: #c44a4a; padding: 6px 12px; font-size: 0.78rem; border-radius: 20px; }
@@ -197,120 +103,60 @@
         .btn-clear:hover { background: #fde0e0; box-shadow: 0 3px 12px rgba(200, 120, 120, 0.25); }
         .btn-icon { font-size: 1.1rem; }
 
-        /* KPIs */
         .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-            animation: fadeInUp 0.55s ease forwards;
-            animation-delay: 0.05s;
-            opacity: 0;
-            animation-fill-mode: forwards;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+            animation: fadeInUp 0.55s ease forwards; animation-delay: 0.05s; opacity: 0; animation-fill-mode: forwards;
         }
         .kpi-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 18px 20px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            background: var(--card); border-radius: var(--radius); padding: 18px 20px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: var(--transition);
+            position: relative; overflow: hidden;
         }
         .kpi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
         .kpi-card::after {
-            content: '';
-            position: absolute;
-            top: -30px; right: -30px;
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            opacity: 0.25;
-            pointer-events: none;
-            transition: var(--transition);
+            content: ''; position: absolute; top: -30px; right: -30px; width: 80px; height: 80px;
+            border-radius: 50%; opacity: 0.25; pointer-events: none; transition: var(--transition);
         }
         .kpi-card:hover::after { width: 100px; height: 100px; top: -40px; right: -40px; opacity: 0.35; }
         .kpi-card.kpi-lavender::after { background: var(--lavender-light); }
-        .kpi-card.kpi-rose::after     { background: var(--rose-light); }
-        .kpi-card.kpi-mint::after     { background: var(--mint-light); }
-        .kpi-card.kpi-sky::after      { background: var(--sky-light); }
-
+        .kpi-card.kpi-rose::after { background: var(--rose-light); }
+        .kpi-card.kpi-mint::after { background: var(--mint-light); }
+        .kpi-card.kpi-sky::after { background: var(--sky-light); }
         .kpi-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-lighter); font-weight: 600; margin-bottom: 4px; position: relative; z-index: 1; }
         .kpi-value { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text); position: relative; z-index: 1; }
-        .kpi-sub   { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; position: relative; z-index: 1; }
+        .kpi-sub { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; position: relative; z-index: 1; }
 
-        /* Main grid */
         .main-grid {
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 16px;
-            animation: fadeInUp 0.6s ease forwards;
-            animation-delay: 0.1s;
-            opacity: 0;
-            animation-fill-mode: forwards;
+            display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px;
+            animation: fadeInUp 0.6s ease forwards; animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;
         }
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: flex-start; }
-            .header-actions { width: 100%; justify-content: flex-start; }
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 500px) {
-            .kpi-grid { grid-template-columns: 1fr 1fr; }
-            .btn { font-size: 0.8rem; padding: 8px 14px; }
-        }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: flex-start; } .header-actions { width: 100%; justify-content: flex-start; } .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .kpi-grid { grid-template-columns: 1fr 1fr; } .btn { font-size: 0.8rem; padding: 8px 14px; } }
 
         .card {
-            background: var(--card);
-            border-radius: var(--radius-lg);
-            padding: 20px 22px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+            background: var(--card); border-radius: var(--radius-lg); padding: 20px 22px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
         }
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
         .card-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.2px; color: var(--text); }
-        .card-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+        .card-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
         .badge-live { background: #dff5e8; color: #3d8b5f; animation: pulse 2.5s infinite; }
 
-        /* Formulario */
         .form-group { margin-bottom: 13px; }
         .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-light); margin-bottom: 5px; }
         .form-input, .form-select {
-            width: 100%;
-            padding: 11px 14px;
-            border-radius: 25px;
-            border: 2px solid var(--border);
-            font-size: 0.9rem;
-            font-family: inherit;
-            transition: var(--transition);
-            background: #fdfbfe;
-            color: var(--text);
-            outline: none;
+            width: 100%; padding: 11px 14px; border-radius: 25px; border: 2px solid var(--border);
+            font-size: 0.9rem; font-family: inherit; transition: var(--transition); background: #fdfbfe;
+            color: var(--text); outline: none;
         }
         .form-input:focus, .form-select:focus { border-color: var(--lavender); box-shadow: 0 0 0 5px rgba(201,184,212,0.15); background: #fff; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width:400px) { .form-row { grid-template-columns: 1fr; } }
         .total-display {
-            text-align: center; font-size: 1.4rem; font-weight: 800;
-            color: #6b5b7b; padding: 10px;
-            background: var(--lavender-light); border-radius: 25px;
-            transition: var(--transition);
+            text-align: center; font-size: 1.4rem; font-weight: 800; color: #6b5b7b; padding: 10px;
+            background: var(--lavender-light); border-radius: 25px; transition: var(--transition);
         }
 
-        /* Tabla */
         .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
         table { width: 100%; border-collapse: collapse; min-width: 650px; }
         table th { text-align: left; padding: 12px 14px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-lighter); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
@@ -318,29 +164,23 @@
         table tbody tr:hover { background: #fdfbff; }
         .empty-row td { text-align: center; color: var(--text-lighter); padding: 40px; font-style: italic; }
         .cat-tag { display: inline-block; padding: 3px 10px; border-radius: 14px; font-size: 0.73rem; font-weight: 600; }
-        .cat-camisetas  { background: #e3effb; color: #4a6d8c; }
+        .cat-camisetas { background: #e3effb; color: #4a6d8c; }
         .cat-pantalones { background: #e8ddf2; color: #5e4a7a; }
-        .cat-vestidos   { background: #fce8e8; color: #8c4a5a; }
-        .cat-chaquetas  { background: #fdf0e8; color: #8c6a4a; }
+        .cat-vestidos { background: #fce8e8; color: #8c4a5a; }
+        .cat-chaquetas { background: #fdf0e8; color: #8c6a4a; }
         .cat-accesorios { background: #dff5e8; color: #3d6b4f; }
 
-        /* Gráfica */
         .chart-container { position: relative; width: 100%; height: 290px; }
         .chart-container canvas { width: 100% !important; height: 100% !important; }
 
-        /* Toast */
         .toast {
-            position: fixed; bottom: 30px; right: 30px;
-            background: #4a4458; color: #fff;
-            padding: 12px 22px; border-radius: 30px;
-            font-weight: 600; font-size: 0.9rem;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
-            z-index: 999;
-            animation: scaleIn 0.3s ease, floatUp 0.5s ease 2s forwards;
-            pointer-events: none;
+            position: fixed; bottom: 30px; right: 30px; background: #4a4458; color: #fff;
+            padding: 12px 22px; border-radius: 30px; font-weight: 600; font-size: 0.9rem;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2); z-index: 999;
+            animation: scaleIn 0.3s ease, floatUp 0.5s ease 2s forwards; pointer-events: none;
         }
         .toast.success { background: #4a7d6a; }
-        .toast.error   { background: #b55a5a; }
+        .toast.error { background: #b55a5a; }
 
         #importFileInput { display: none; }
         .row-new { animation: rowHighlight 1.2s ease; }
@@ -353,7 +193,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Encabezado -->
         <header class="header">
             <div class="header-left">
                 <div class="logo-icon">👗</div>
@@ -376,7 +215,6 @@
             </div>
         </header>
 
-        <!-- KPIs -->
         <div class="kpi-grid">
             <div class="kpi-card kpi-lavender">
                 <div class="kpi-label">💰 Ventas Hoy</div>
@@ -400,16 +238,13 @@
             </div>
         </div>
 
-        <!-- Gráfica + Formulario -->
         <div class="main-grid">
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">📈 Crecimiento Diario</span>
                     <span class="card-badge badge-live">Últimos 7 días</span>
                 </div>
-                <div class="chart-container">
-                    <canvas id="chartVentas"></canvas>
-                </div>
+                <div class="chart-container"><canvas id="chartVentas"></canvas></div>
             </div>
             <div class="card">
                 <div class="card-header"><span class="card-title">🛍️ Nueva Venta</span></div>
@@ -450,7 +285,6 @@
             </div>
         </div>
 
-        <!-- Historial -->
         <div class="card">
             <div class="card-header">
                 <span class="card-title">📋 Historial de Ventas</span>
@@ -458,9 +292,7 @@
             </div>
             <div class="table-wrapper">
                 <table>
-                    <thead>
-                        <tr><th>Fecha</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cant.</th><th>Total</th><th>Acción</th></tr>
-                    </thead>
+                    <thead><tr><th>Fecha</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cant.</th><th>Total</th><th>Acción</th></tr></thead>
                     <tbody id="tablaBody">
                         <tr class="empty-row"><td colspan="7">🌸 Aún no hay ventas registradas. ¡Agrega tu primera venta!</td></tr>
                     </tbody>
@@ -473,14 +305,17 @@
 
     <script>
         (function() {
-            // ⚡ CONFIGURACIÓN NPOINT
-            const NPOINT_URL = 'https://api.npoint.io/7127bb481d4a94c86c56';
+            // ⚡ CONFIGURACIÓN SUPABASE
+            const SUPABASE_URL = 'https://rehvllfnghaprkpslkhf.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlaHZsbGZuZ2hhcHJrcHNsa2hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NzI3ODQsImV4cCI6MjA5NTA0ODc4NH0.ahrW64XSb3gTGoON4MDEyLWfcsp7Ge8AtzqgGKLHUhU';
             const STORAGE_KEY = 'noelu_ventas_data';
+
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
             let ventas = [];
             let chartInstance = null;
 
-            // DOM elements
+            // DOM
             const formVenta = document.getElementById('formVenta');
             const inputProducto = document.getElementById('producto');
             const inputCategoria = document.getElementById('categoria');
@@ -508,24 +343,31 @@
                 cloudLabel.textContent = label;
             }
 
-            // ============ SINCRONIZACIÓN NUBE ============
+            // ============ SINCRONIZACIÓN SUPABASE ============
             async function sincronizarNube() {
                 setCloudStatus('syncing', 'Conectando...');
                 try {
-                    const resp = await fetch(NPOINT_URL);
-                    if (!resp.ok) throw new Error('Respuesta no válida');
-                    const data = await resp.json();
-                    if (Array.isArray(data) && data.length > 0) {
-                        ventas = data;
+                    const { data, error } = await supabase
+                        .from('ventas')
+                        .select('*')
+                        .order('id', { ascending: false });
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        ventas = data.map(v => ({
+                            ...v,
+                            total: v.total || (v.precio * v.cantidad)
+                        }));
                         guardarDatos();
                         setCloudStatus('online', 'Conectado');
                         return true;
                     } else {
-                        setCloudStatus('online', 'Nube vacía');
+                        setCloudStatus('online', 'Conectado (vacía)');
                         return true;
                     }
                 } catch (e) {
-                    console.warn('Nube no disponible:', e.message);
+                    console.warn('Error al conectar con Supabase:', e.message);
                     setCloudStatus('offline', 'Sin conexión');
                     return false;
                 }
@@ -534,18 +376,49 @@
             async function subirANube() {
                 setCloudStatus('syncing', 'Guardando...');
                 try {
-                    const resp = await fetch(NPOINT_URL, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(ventas)
-                    });
-                    if (!resp.ok) throw new Error('Error al guardar');
+                    // Obtener IDs en la nube
+                    const { data: cloudData, error: readError } = await supabase
+                        .from('ventas')
+                        .select('id');
+
+                    if (readError) throw readError;
+
+                    const cloudIds = new Set((cloudData || []).map(v => v.id));
+                    const localIds = new Set(ventas.map(v => v.id));
+
+                    // Eliminar los que ya no están localmente
+                    const idsToDelete = [...cloudIds].filter(id => !localIds.has(id));
+                    if (idsToDelete.length > 0) {
+                        const { error: deleteError } = await supabase
+                            .from('ventas')
+                            .delete()
+                            .in('id', idsToDelete);
+                        if (deleteError) throw deleteError;
+                    }
+
+                    // Insertar los nuevos (no presentes en la nube)
+                    for (const venta of ventas) {
+                        if (!cloudIds.has(venta.id)) {
+                            const { error: insertError } = await supabase
+                                .from('ventas')
+                                .insert({
+                                    id: venta.id,
+                                    producto: venta.producto,
+                                    categoria: venta.categoria,
+                                    precio: venta.precio,
+                                    cantidad: venta.cantidad,
+                                    fecha: venta.fecha
+                                });
+                            if (insertError) throw insertError;
+                        }
+                    }
+
                     setCloudStatus('online', 'Conectado');
                     return true;
                 } catch (e) {
-                    console.error('Error al subir:', e);
+                    console.error('Error al guardar en Supabase:', e.message);
                     setCloudStatus('offline', 'Error al guardar');
-                    mostrarToast('⚠️ No se pudo sincronizar con la nube', 'error');
+                    mostrarToast('⚠️ No se pudo sincronizar con Supabase', 'error');
                     return false;
                 }
             }
@@ -852,8 +725,7 @@
             init();
 
             setInterval(() => { actualizarKPIs(); renderizarGrafica(); }, 60000);
-            console.log('🌸 Noelu Ventas – npoint.io sincronizado');
-            console.log('🔗 Endpoint:', NPOINT_URL);
+            console.log('🌸 Noelu Ventas – Supabase sincronizado');
         })();
     </script>
 </body>
