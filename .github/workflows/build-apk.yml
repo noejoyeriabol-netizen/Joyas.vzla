@@ -3,7 +3,7 @@ name: 🔷 Generar APK - Noelu Ventas
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:   # permite disparo manual
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -31,6 +31,10 @@ jobs:
 
       - name: 📦 Instalar dependencias de Capacitor
         run: npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      # 🆕 Agrega esta línea justo aquí
+      - name: 🎨 Generar íconos de la app
+        run: npx @capacitor/assets generate --iconBackgroundColor '#e8ddf2' --iconBackgroundColorDark '#4a4458'
 
       - name: 🛠️ Inicializar Capacitor y agregar Android
         run: |
