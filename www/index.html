@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 Boutique Pastel - Control de Ventas</title>
+    <title>🌸 Boutique Pastel - Control de Ventas (Nube)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
     </script>
     <style>
@@ -31,6 +31,8 @@
             --radius: 18px;
             --radius-lg: 24px;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --online: #6fbf8b;
+            --offline: #d0858b;
         }
 
         * {
@@ -53,7 +55,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Animación de entrada */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -72,15 +73,6 @@
             to {
                 opacity: 1;
                 transform: scale(1);
-            }
-        }
-        @keyframes shimmer {
-            0%,
-            100% {
-                background-position: -200% 0;
-            }
-            50% {
-                background-position: 200% 0;
             }
         }
         @keyframes floatUp {
@@ -102,6 +94,14 @@
                 box-shadow: 0 0 0 14px rgba(201, 184, 212, 0);
             }
         }
+        @keyframes rowHighlight {
+            0% {
+                background: #f3ecf9;
+            }
+            100% {
+                background: transparent;
+            }
+        }
 
         .container {
             max-width: 1300px;
@@ -111,7 +111,6 @@
             gap: 18px;
         }
 
-        /* Header */
         .header {
             display: flex;
             flex-wrap: wrap;
@@ -153,14 +152,51 @@
             font-size: 0.8rem;
             color: var(--text-light);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .header-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            align-items: center;
         }
 
-        /* Botones */
+        /* Indicador de estado de nube */
+        .cloud-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: -0.1px;
+            background: #f4f1f8;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .cloud-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #ccc;
+            transition: background 0.3s;
+        }
+        .cloud-dot.online {
+            background: var(--online);
+            box-shadow: 0 0 8px rgba(111, 191, 139, 0.6);
+        }
+        .cloud-dot.offline {
+            background: var(--offline);
+            box-shadow: 0 0 8px rgba(208, 133, 139, 0.6);
+        }
+        .cloud-dot.syncing {
+            background: #e5c687;
+            animation: pulse 1.2s infinite;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -237,7 +273,6 @@
             font-size: 1.1rem;
         }
 
-        /* KPIs */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -319,7 +354,6 @@
             z-index: 1;
         }
 
-        /* Main grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1.3fr 1fr;
@@ -395,7 +429,6 @@
             animation: pulse 2.5s infinite;
         }
 
-        /* Formulario */
         .form-group {
             margin-bottom: 13px;
         }
@@ -448,7 +481,6 @@
             transition: var(--transition);
         }
 
-        /* Tabla */
         .table-wrapper {
             overflow-x: auto;
             border-radius: var(--radius);
@@ -519,7 +551,6 @@
             color: #3d6b4f;
         }
 
-        /* Gráfica */
         .chart-container {
             position: relative;
             width: 100%;
@@ -530,7 +561,6 @@
             height: 100% !important;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -554,7 +584,6 @@
             background: #b55a5a;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             height: 6px;
             width: 6px;
@@ -570,19 +599,8 @@
             background: #c0b5d0;
         }
 
-        /* File input oculto */
         #importFileInput {
             display: none;
-        }
-
-        /* Animación en la tabla al agregar */
-        @keyframes rowHighlight {
-            0% {
-                background: #f3ecf9;
-            }
-            100% {
-                background: transparent;
-            }
         }
         .row-new {
             animation: rowHighlight 1.2s ease;
@@ -597,7 +615,13 @@
                 <div class="logo-icon">👗</div>
                 <div>
                     <h1>Boutique Pastel</h1>
-                    <p class="header-subtitle">Control de ventas · Moda & Estilo</p>
+                    <p class="header-subtitle">
+                        Control de ventas · Moda & Estilo
+                        <span class="cloud-status" id="cloudStatus">
+                            <span class="cloud-dot" id="cloudDot"></span>
+                            <span id="cloudLabel">Verificando...</span>
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="header-actions">
@@ -640,7 +664,6 @@
 
         <!-- Main: Gráfica + Formulario -->
         <div class="main-grid">
-            <!-- Gráfica -->
             <div class="card" style="animation: fadeInUp 0.6s ease forwards; animation-delay: 0.12s; opacity: 0; animation-fill-mode: forwards;">
                 <div class="card-header">
                     <span class="card-title">📈 Crecimiento Diario</span>
@@ -650,8 +673,6 @@
                     <canvas id="chartVentas"></canvas>
                 </div>
             </div>
-
-            <!-- Formulario -->
             <div class="card" style="animation: fadeInUp 0.6s ease forwards; animation-delay: 0.16s; opacity: 0; animation-fill-mode: forwards;">
                 <div class="card-header">
                     <span class="card-title">🛍️ Nueva Venta</span>
@@ -724,17 +745,18 @@
         </div>
     </div>
 
-    <!-- Toast container -->
     <div id="toastContainer"></div>
 
     <script>
         (function() {
-            // ============ CONSTANTES ============
+            // ⚡ CONFIGURACIÓN: endpoint npoint.io
+            const NPOINT_URL = 'https://api.npoint.io/346f4e3989cfc4ab74ee';
+
             const STORAGE_KEY = 'boutique_pastel_ventas';
             let ventas = [];
             let chartInstance = null;
 
-            // ============ ELEMENTOS DOM ============
+            // Elementos DOM
             const formVenta = document.getElementById('formVenta');
             const inputProducto = document.getElementById('producto');
             const inputCategoria = document.getElementById('categoria');
@@ -755,27 +777,60 @@
             const kpiSemanaCant = document.getElementById('kpiSemanaCant');
             const kpiTotalReg = document.getElementById('kpiTotalReg');
 
-            // ============ INICIALIZACIÓN ============
-            function init() {
-                cargarDatos();
-                const hoy = new Date().toISOString().split('T')[0];
-                inputFecha.value = hoy;
-                inputFecha.setAttribute('max', hoy);
-                actualizarTotalDisplay();
-                renderizarTabla();
-                actualizarKPIs();
-                renderizarGrafica();
-                setupEventListeners();
+            // Estado de nube
+            const cloudDot = document.getElementById('cloudDot');
+            const cloudLabel = document.getElementById('cloudLabel');
+
+            function setCloudStatus(status, label) {
+                cloudDot.className = 'cloud-dot ' + status;
+                cloudLabel.textContent = label;
+                if (status === 'syncing') {
+                    cloudLabel.textContent = 'Sincronizando...';
+                }
             }
 
-            function setupEventListeners() {
-                formVenta.addEventListener('submit', handleSubmitVenta);
-                inputPrecio.addEventListener('input', actualizarTotalDisplay);
-                inputCantidad.addEventListener('input', actualizarTotalDisplay);
-                // Limpiar el input file para permitir reimportar el mismo archivo
-                importFileInput.addEventListener('click', function() {
-                    this.value = '';
-                });
+            // ============ SINCRONIZACIÓN CON NUBE ============
+            async function sincronizarNube() {
+                setCloudStatus('syncing', 'Conectando...');
+                try {
+                    const resp = await fetch(NPOINT_URL);
+                    if (!resp.ok) throw new Error('Respuesta no válida');
+                    const data = await resp.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        // La nube tiene datos: los usamos
+                        ventas = data;
+                        guardarDatos(); // actualizar localStorage
+                        setCloudStatus('online', 'Conectado');
+                        return true;
+                    } else {
+                        // Nube vacía, mantenemos datos locales
+                        setCloudStatus('online', 'Nube vacía');
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn('⚠️ No se pudo conectar con la nube:', e.message);
+                    setCloudStatus('offline', 'Sin conexión');
+                    return false;
+                }
+            }
+
+            async function subirANube() {
+                setCloudStatus('syncing', 'Guardando...');
+                try {
+                    const resp = await fetch(NPOINT_URL, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(ventas)
+                    });
+                    if (!resp.ok) throw new Error('Error al guardar');
+                    setCloudStatus('online', 'Conectado');
+                    return true;
+                } catch (e) {
+                    console.error('Error al subir a nube:', e);
+                    setCloudStatus('offline', 'Error al guardar');
+                    mostrarToast('⚠️ No se pudo sincronizar con la nube', 'error');
+                    return false;
+                }
             }
 
             // ============ LOCAL STORAGE ============
@@ -785,7 +840,6 @@
                     if (raw) {
                         ventas = JSON.parse(raw);
                         if (!Array.isArray(ventas)) ventas = [];
-                        // Validar estructura mínima
                         ventas = ventas.filter(v =>
                             v && typeof v === 'object' &&
                             v.producto && v.precio !== undefined && v.cantidad !== undefined && v.fecha
@@ -794,7 +848,7 @@
                         ventas = [];
                     }
                 } catch (e) {
-                    console.error('Error al cargar datos:', e);
+                    console.error('Error al cargar datos locales:', e);
                     ventas = [];
                 }
             }
@@ -803,13 +857,12 @@
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
                 } catch (e) {
-                    console.error('Error al guardar datos:', e);
-                    mostrarToast('Error al guardar. El almacenamiento puede estar lleno.', 'error');
+                    console.error('Error al guardar en localStorage:', e);
                 }
             }
 
             // ============ CRUD ============
-            function handleSubmitVenta(e) {
+            async function handleSubmitVenta(e) {
                 e.preventDefault();
 
                 const producto = inputProducto.value.trim();
@@ -835,12 +888,12 @@
 
                 ventas.unshift(nuevaVenta);
                 guardarDatos();
+                await subirANube();
                 renderizarTabla(true);
                 actualizarKPIs();
                 renderizarGrafica();
                 mostrarToast('✅ Venta registrada con éxito!', 'success');
 
-                // Resetear formulario
                 formVenta.reset();
                 inputFecha.value = new Date().toISOString().split('T')[0];
                 inputCantidad.value = '1';
@@ -848,17 +901,18 @@
                 inputProducto.focus();
             }
 
-            function eliminarVenta(id) {
+            async function eliminarVenta(id) {
                 if (!confirm('¿Estás seguro de eliminar esta venta? Esta acción no se puede deshacer.')) return;
                 ventas = ventas.filter(v => v.id !== id);
                 guardarDatos();
+                await subirANube();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
                 mostrarToast('🗑️ Venta eliminada.', 'error');
             }
 
-            function limpiarDatos() {
+            async function limpiarDatos() {
                 if (ventas.length === 0) {
                     mostrarToast('No hay datos para limpiar.', 'error');
                     return;
@@ -868,6 +922,7 @@
                         )) return;
                 ventas = [];
                 guardarDatos();
+                await subirANube();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
@@ -910,13 +965,8 @@
                 const cantidad = parseInt(inputCantidad.value) || 0;
                 const total = precio * cantidad;
                 totalDisplay.textContent = `Total: $${total.toFixed(2)}`;
-                if (total > 0) {
-                    totalDisplay.style.background = '#e0d6ec';
-                    totalDisplay.style.color = '#5a4870';
-                } else {
-                    totalDisplay.style.background = '#f3f0f6';
-                    totalDisplay.style.color = '#a098b0';
-                }
+                totalDisplay.style.background = total > 0 ? '#e0d6ec' : '#f3f0f6';
+                totalDisplay.style.color = total > 0 ? '#5a4870' : '#a098b0';
             }
 
             // ============ KPIs ============
@@ -926,17 +976,14 @@
                 ayerDate.setDate(ayerDate.getDate() - 1);
                 const ayer = ayerDate.toISOString().split('T')[0];
 
-                // Ventas hoy
                 const ventasHoy = ventas.filter(v => v.fecha === hoy);
                 const totalHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
                 const cantHoy = ventasHoy.reduce((sum, v) => sum + v.cantidad, 0);
 
-                // Ventas ayer
                 const ventasAyer = ventas.filter(v => v.fecha === ayer);
                 const totalAyer = ventasAyer.reduce((sum, v) => sum + v.total, 0);
                 const cantAyer = ventasAyer.reduce((sum, v) => sum + v.cantidad, 0);
 
-                // Últimos 7 días
                 const fechas7d = generarUltimos7Dias();
                 const ventas7d = ventas.filter(v => fechas7d.includes(v.fecha));
                 const total7d = ventas7d.reduce((sum, v) => sum + v.total, 0);
@@ -972,7 +1019,6 @@
                 ayer.setDate(ayer.getDate() - 1);
                 const hoyStr = hoy.toISOString().split('T')[0];
                 const ayerStr = ayer.toISOString().split('T')[0];
-
                 if (fechaStr === hoyStr) return 'Hoy';
                 if (fechaStr === ayerStr) return 'Ayer';
                 return `${diasSemana[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
@@ -980,8 +1026,6 @@
 
             function renderizarGrafica() {
                 const ctx = document.getElementById('chartVentas').getContext('2d');
-
-                // Destruir gráfica anterior
                 if (chartInstance) {
                     chartInstance.destroy();
                     chartInstance = null;
@@ -990,29 +1034,21 @@
                 const fechas7d = generarUltimos7Dias();
                 const labels = fechas7d.map(f => formatearFechaLabel(f));
                 const data = fechas7d.map(fecha => {
-                    return ventas
-                        .filter(v => v.fecha === fecha)
-                        .reduce((sum, v) => sum + v.total, 0);
+                    return ventas.filter(v => v.fecha === fecha).reduce((sum, v) => sum + v.total, 0);
                 });
 
-                // Crear gradiente para el fill
                 const gradient = ctx.createLinearGradient(0, 0, 0, 300);
                 gradient.addColorStop(0, 'rgba(201, 184, 212, 0.45)');
                 gradient.addColorStop(0.5, 'rgba(201, 184, 212, 0.15)');
                 gradient.addColorStop(1, 'rgba(201, 184, 212, 0.01)');
 
-                const gradientLine = ctx.createLinearGradient(0, 0, 400, 0);
-                gradientLine.addColorStop(0, '#b8a0c8');
-                gradientLine.addColorStop(0.5, '#c9b8d4');
-                gradientLine.addColorStop(1, '#d4c4de');
-
                 chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: labels,
+                        labels,
                         datasets: [{
                             label: 'Ventas ($)',
-                            data: data,
+                            data,
                             borderColor: '#b8a0c8',
                             backgroundColor: gradient,
                             borderWidth: 3,
@@ -1032,188 +1068,93 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        animation: {
-                            duration: 1000,
-                            easing: 'easeInOutQuart',
-                        },
-                        transitions: {
-                            show: {
-                                animations: {
-                                    x: { from: 0 },
-                                    y: { from: 0 },
-                                },
-                            },
-                            hide: {
-                                animations: {
-                                    x: { to: 0 },
-                                    y: { to: 0 },
-                                },
-                            },
-                        },
+                        animation: { duration: 1000, easing: 'easeInOutQuart' },
                         plugins: {
                             legend: {
-                                display: true,
-                                position: 'top',
                                 labels: {
                                     usePointStyle: true,
                                     pointStyleWidth: 10,
                                     pointStyleHeight: 10,
                                     padding: 20,
-                                    font: {
-                                        size: 12,
-                                        weight: '600',
-                                        family: "'Segoe UI', system-ui, sans-serif",
-                                    },
+                                    font: { size: 12, weight: '600', family: "'Segoe UI', system-ui, sans-serif" },
                                     color: '#7a7488',
-                                    boxWidth: 10,
-                                },
+                                }
                             },
                             tooltip: {
                                 backgroundColor: '#4a4458',
-                                titleFont: {
-                                    size: 13,
-                                    weight: '700',
-                                    family: "'Segoe UI', system-ui, sans-serif",
-                                },
-                                bodyFont: {
-                                    size: 12,
-                                    family: "'Segoe UI', system-ui, sans-serif",
-                                },
+                                titleFont: { size: 13, weight: '700' },
+                                bodyFont: { size: 12 },
                                 padding: 14,
                                 cornerRadius: 14,
                                 displayColors: false,
-                                callbacks: {
-                                    label: function(ctx) {
-                                        return ` $${ctx.parsed.y.toFixed(2)}`;
-                                    },
-                                },
-                            },
+                                callbacks: { label: (ctx) => ` $${ctx.parsed.y.toFixed(2)}` }
+                            }
                         },
                         scales: {
-                            x: {
-                                grid: {
-                                    display: false,
-                                },
-                                ticks: {
-                                    font: {
-                                        size: 11,
-                                        weight: '500',
-                                        family: "'Segoe UI', system-ui, sans-serif",
-                                    },
-                                    color: '#a098b0',
-                                },
-                                border: {
-                                    display: true,
-                                    color: '#e8e3ed',
-                                },
-                            },
+                            x: { grid: { display: false }, ticks: { color: '#a098b0' }, border: { color: '#e8e3ed' } },
                             y: {
                                 beginAtZero: true,
-                                grid: {
-                                    color: '#f3f0f6',
-                                    drawBorder: false,
-                                },
-                                ticks: {
-                                    font: {
-                                        size: 11,
-                                        weight: '500',
-                                        family: "'Segoe UI', system-ui, sans-serif",
-                                    },
-                                    color: '#a098b0',
-                                    callback: function(value) {
-                                        return '$' + value;
-                                    },
-                                },
-                                border: {
-                                    display: false,
-                                },
-                            },
+                                grid: { color: '#f3f0f6' },
+                                ticks: { color: '#a098b0', callback: v => '$' + v },
+                                border: { display: false }
+                            }
                         },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    },
+                        interaction: { intersect: false, mode: 'index' }
+                    }
                 });
             }
 
             // ============ EXPORTAR / IMPORTAR JSON ============
             function exportarJSON() {
-                if (ventas.length === 0) {
-                    mostrarToast('⚠️ No hay datos para exportar.', 'error');
-                    return;
-                }
-                const jsonStr = JSON.stringify(ventas, null, 2);
-                const blob = new Blob([jsonStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
+                if (ventas.length === 0) { mostrarToast('⚠️ No hay datos para exportar.', 'error'); return; }
+                const blob = new Blob([JSON.stringify(ventas, null, 2)], { type: 'application/json' });
                 const a = document.createElement('a');
-                a.href = url;
-                const fechaExport = new Date().toISOString().split('T')[0];
-                a.download = `ventas_boutique_${fechaExport}.json`;
+                a.href = URL.createObjectURL(blob);
+                a.download = `ventas_boutique_${new Date().toISOString().split('T')[0]}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(url);
                 mostrarToast(`📤 Exportado: ${ventas.length} registros.`, 'success');
             }
 
             function importarJSON(event) {
                 const file = event.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     try {
                         const data = JSON.parse(e.target.result);
-                        if (!Array.isArray(data)) {
-                            throw new Error('El JSON debe ser un array de ventas.');
-                        }
-                        // Validar estructura
+                        if (!Array.isArray(data)) throw new Error('El JSON debe ser un array.');
                         const validados = data.filter(v =>
-                            v && typeof v === 'object' &&
-                            v.producto && v.precio !== undefined && v.cantidad !== undefined && v.fecha
+                            v && v.producto && v.precio !== undefined && v.cantidad !== undefined && v.fecha
                         );
-                        if (validados.length === 0) {
-                            throw new Error(
-                                'No se encontraron registros válidos. Cada venta debe tener: producto, precio, cantidad, fecha.');
-                        }
-                        const skipped = data.length - validados.length;
-                        let mensaje = `Se encontraron ${validados.length} registros válidos.`;
-                        if (skipped > 0) mensaje += `\n(${skipped} registros inválidos serán omitidos.)`;
-                        mensaje += '\n\n¿Reemplazar todos los datos actuales?';
-
-                        if (!confirm(mensaje)) return;
-
-                        // Asignar nuevos IDs si no tienen
-                        validados.forEach(v => {
-                            if (!v.id) v.id = Date.now() + Math.random() * 10000;
-                            if (!v.total) v.total = Math.round(v.precio * v.cantidad * 100) /
-                                100;
-                            if (!v.categoria) v.categoria = 'camisetas';
-                        });
-
-                        ventas = validados;
+                        if (validados.length === 0) throw new Error('Sin registros válidos.');
+                        if (!confirm(`¿Reemplazar con ${validados.length} registros?`)) return;
+                        ventas = validados.map(v => ({
+                            ...v,
+                            id: v.id || Date.now() + Math.random() * 10000,
+                            total: v.total || Math.round(v.precio * v.cantidad * 100) / 100,
+                            categoria: v.categoria || 'camisetas'
+                        }));
                         guardarDatos();
+                        await subirANube();
                         renderizarTabla();
                         actualizarKPIs();
                         renderizarGrafica();
-                        mostrarToast(`📥 Importados ${validados.length} registros correctamente.`, 'success');
+                        mostrarToast(`📥 Importados ${ventas.length} registros.`, 'success');
                     } catch (err) {
-                        console.error('Error al importar:', err);
-                        mostrarToast('❌ Error: ' + err.message, 'error');
+                        mostrarToast('❌ ' + err.message, 'error');
                     }
                 };
                 reader.readAsText(file);
-                // Limpiar input
                 importFileInput.value = '';
             }
 
             // ============ UTILIDADES ============
             function formatearFecha(fechaStr) {
-                const partes = fechaStr.split('-');
-                const d = new Date(partes[0], partes[1] - 1, partes[2]);
+                const [y, m, d] = fechaStr.split('-');
                 const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                return `${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+                return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
             }
 
             function escaparHTML(str) {
@@ -1228,34 +1169,51 @@
                 toast.className = `toast ${tipo}`;
                 toast.textContent = mensaje;
                 container.appendChild(toast);
-
-                // Eliminar después de la animación
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 2600);
+                setTimeout(() => toast.remove(), 2600);
             }
 
-            // ============ EXPONER FUNCIONES GLOBALES ============
+            // ============ INICIALIZACIÓN ============
+            async function init() {
+                cargarDatos(); // carga inicial desde localStorage
+                inputFecha.value = new Date().toISOString().split('T')[0];
+                inputFecha.setAttribute('max', new Date().toISOString().split('T')[0]);
+                actualizarTotalDisplay();
+                renderizarTabla();
+                actualizarKPIs();
+                renderizarGrafica();
+                setupEventListeners();
+
+                // Intentar sincronizar con la nube después de mostrar interfaz
+                await sincronizarNube();
+                // Refrescar UI si la nube trajo datos diferentes
+                renderizarTabla();
+                actualizarKPIs();
+                renderizarGrafica();
+            }
+
+            function setupEventListeners() {
+                formVenta.addEventListener('submit', handleSubmitVenta);
+                inputPrecio.addEventListener('input', actualizarTotalDisplay);
+                inputCantidad.addEventListener('input', actualizarTotalDisplay);
+                importFileInput.addEventListener('click', () => importFileInput.value = '');
+            }
+
+            // Exponer funciones globales
             window.eliminarVenta = eliminarVenta;
             window.exportarJSON = exportarJSON;
             window.importarJSON = importarJSON;
             window.limpiarDatos = limpiarDatos;
 
-            // ============ INICIAR ============
             init();
 
-            // Actualizar KPIs cada minuto (por si cambia el día)
+            // Refresco periódico de KPIs y gráfica (cada 60s)
             setInterval(() => {
                 actualizarKPIs();
                 renderizarGrafica();
             }, 60000);
 
-            console.log('🌸 Boutique Pastel - Control de Ventas inicializado');
-            console.log('💾 Datos almacenados en localStorage:', STORAGE_KEY);
-            console.log('📊 Gráfica de últimos 7 días activa');
-            console.log('📤 Exportar / 📥 Importar JSON disponible');
+            console.log('🌸 Boutique Pastel con sincronización en nube (npoint.io)');
+            console.log('🔗 Endpoint:', NPOINT_URL);
         })();
     </script>
 </body>
