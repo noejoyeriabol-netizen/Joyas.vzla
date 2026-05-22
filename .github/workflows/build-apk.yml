@@ -32,14 +32,14 @@ jobs:
       - name: 📦 Instalar dependencias de Capacitor
         run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
 
-      # 🔑 PASO CLAVE: Generar todos los tamaños de ícono a partir de resources/icon.png
-      - name: 🎨 Generar íconos de la app
-        run: npx @capacitor/assets generate --iconBackgroundColor '#e8ddf2' --iconBackgroundColorDark '#4a4458'
-
       - name: 🛠️ Inicializar Capacitor y agregar Android
         run: |
           npx cap init "Noelu Ventas" "com.noelu.ventas" --web-dir=www
           npx cap add android
+
+      # 🔑 PASO CLAVE: Generar íconos DESPUÉS de agregar Android y apuntando a la carpeta "resources"
+      - name: 🎨 Generar íconos de la app
+        run: npx @capacitor/assets generate --assetPath resources --iconBackgroundColor '#e8ddf2' --iconBackgroundColorDark '#4a4458'
 
       - name: 📂 Sincronizar archivos web
         run: npx cap sync android
