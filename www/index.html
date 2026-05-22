@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 Boutique Pastel - Control de Ventas (Nube)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🌸 Noelu Ventas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
     </script>
     <style>
@@ -56,51 +56,24 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.92); }
+            to   { opacity: 1; transform: scale(1); }
         }
         @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px) scale(1.1);
-            }
+            0%   { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.1); }
         }
         @keyframes pulse {
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(201, 184, 212, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 0 14px rgba(201, 184, 212, 0);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(201, 184, 212, 0.5); }
+            50%      { box-shadow: 0 0 0 14px rgba(201, 184, 212, 0); }
         }
         @keyframes rowHighlight {
-            0% {
-                background: #f3ecf9;
-            }
-            100% {
-                background: transparent;
-            }
+            0%   { background: #f3ecf9; }
+            100% { background: transparent; }
         }
 
         .container {
@@ -111,6 +84,7 @@
             gap: 18px;
         }
 
+        /* Header */
         .header {
             display: flex;
             flex-wrap: wrap;
@@ -123,7 +97,6 @@
             box-shadow: var(--shadow);
             animation: fadeInUp 0.5s ease forwards;
             border: 1px solid var(--border);
-            backdrop-filter: blur(6px);
         }
         .header-left {
             display: flex;
@@ -163,7 +136,7 @@
             align-items: center;
         }
 
-        /* Indicador de estado de nube */
+        /* Indicador de nube */
         .cloud-status {
             display: inline-flex;
             align-items: center;
@@ -172,7 +145,6 @@
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
-            letter-spacing: -0.1px;
             background: #f4f1f8;
             color: var(--text-light);
             transition: var(--transition);
@@ -184,19 +156,11 @@
             background: #ccc;
             transition: background 0.3s;
         }
-        .cloud-dot.online {
-            background: var(--online);
-            box-shadow: 0 0 8px rgba(111, 191, 139, 0.6);
-        }
-        .cloud-dot.offline {
-            background: var(--offline);
-            box-shadow: 0 0 8px rgba(208, 133, 139, 0.6);
-        }
-        .cloud-dot.syncing {
-            background: #e5c687;
-            animation: pulse 1.2s infinite;
-        }
+        .cloud-dot.online  { background: var(--online); box-shadow: 0 0 8px rgba(111, 191, 139, 0.6); }
+        .cloud-dot.offline { background: var(--offline); box-shadow: 0 0 8px rgba(208, 133, 139, 0.6); }
+        .cloud-dot.syncing { background: #e5c687; animation: pulse 1.2s infinite; }
 
+        /* Botones */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -214,27 +178,11 @@
             position: relative;
             overflow: hidden;
         }
-        .btn:active {
-            transform: scale(0.96);
-        }
-        .btn-export {
-            background: var(--sky-light);
-            color: #4a6d8c;
-        }
-        .btn-export:hover {
-            background: #d0e5f8;
-            box-shadow: 0 4px 16px rgba(150, 190, 220, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-import {
-            background: var(--mint-light);
-            color: #4a7d6a;
-        }
-        .btn-import:hover {
-            background: #c8f0db;
-            box-shadow: 0 4px 16px rgba(150, 210, 180, 0.3);
-            transform: translateY(-2px);
-        }
+        .btn:active { transform: scale(0.96); }
+        .btn-export { background: var(--sky-light); color: #4a6d8c; }
+        .btn-export:hover { background: #d0e5f8; box-shadow: 0 4px 16px rgba(150, 190, 220, 0.3); transform: translateY(-2px); }
+        .btn-import { background: var(--mint-light); color: #4a7d6a; }
+        .btn-import:hover { background: #c8f0db; box-shadow: 0 4px 16px rgba(150, 210, 180, 0.3); transform: translateY(-2px); }
         .btn-add {
             background: linear-gradient(135deg, #c9b8d4, #d4c4de);
             color: #fff;
@@ -242,37 +190,14 @@
             font-weight: 700;
             padding: 11px 22px;
         }
-        .btn-add:hover {
-            box-shadow: 0 6px 22px rgba(180, 160, 200, 0.5);
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #d4c4de, #dfd0e8);
-        }
-        .btn-delete {
-            background: var(--rose-light);
-            color: #c44a4a;
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            border-radius: 20px;
-        }
-        .btn-delete:hover {
-            background: #f8d4d4;
-            box-shadow: 0 3px 10px rgba(200, 100, 100, 0.2);
-        }
-        .btn-clear {
-            background: #fef0f0;
-            color: #b55a5a;
-            font-size: 0.82rem;
-            padding: 8px 14px;
-            border-radius: 22px;
-        }
-        .btn-clear:hover {
-            background: #fde0e0;
-            box-shadow: 0 3px 12px rgba(200, 120, 120, 0.25);
-        }
-        .btn-icon {
-            font-size: 1.1rem;
-        }
+        .btn-add:hover { box-shadow: 0 6px 22px rgba(180, 160, 200, 0.5); transform: translateY(-2px); }
+        .btn-delete { background: var(--rose-light); color: #c44a4a; padding: 6px 12px; font-size: 0.78rem; border-radius: 20px; }
+        .btn-delete:hover { background: #f8d4d4; box-shadow: 0 3px 10px rgba(200, 100, 100, 0.2); }
+        .btn-clear { background: #fef0f0; color: #b55a5a; font-size: 0.82rem; padding: 8px 14px; border-radius: 22px; }
+        .btn-clear:hover { background: #fde0e0; box-shadow: 0 3px 12px rgba(200, 120, 120, 0.25); }
+        .btn-icon { font-size: 1.1rem; }
 
+        /* KPIs */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -291,69 +216,29 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
-            cursor: default;
         }
-        .kpi-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-3px);
-        }
+        .kpi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
         .kpi-card::after {
             content: '';
             position: absolute;
-            top: -30px;
-            right: -30px;
-            width: 80px;
-            height: 80px;
+            top: -30px; right: -30px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             opacity: 0.25;
             pointer-events: none;
             transition: var(--transition);
         }
-        .kpi-card:hover::after {
-            width: 100px;
-            height: 100px;
-            top: -40px;
-            right: -40px;
-            opacity: 0.35;
-        }
-        .kpi-card.kpi-lavender::after {
-            background: var(--lavender-light);
-        }
-        .kpi-card.kpi-rose::after {
-            background: var(--rose-light);
-        }
-        .kpi-card.kpi-mint::after {
-            background: var(--mint-light);
-        }
-        .kpi-card.kpi-sky::after {
-            background: var(--sky-light);
-        }
-        .kpi-label {
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--text-lighter);
-            font-weight: 600;
-            margin-bottom: 4px;
-            position: relative;
-            z-index: 1;
-        }
-        .kpi-value {
-            font-size: 1.9rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--text);
-            position: relative;
-            z-index: 1;
-        }
-        .kpi-sub {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: 2px;
-            position: relative;
-            z-index: 1;
-        }
+        .kpi-card:hover::after { width: 100px; height: 100px; top: -40px; right: -40px; opacity: 0.35; }
+        .kpi-card.kpi-lavender::after { background: var(--lavender-light); }
+        .kpi-card.kpi-rose::after     { background: var(--rose-light); }
+        .kpi-card.kpi-mint::after     { background: var(--mint-light); }
+        .kpi-card.kpi-sky::after      { background: var(--sky-light); }
 
+        .kpi-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-lighter); font-weight: 600; margin-bottom: 4px; position: relative; z-index: 1; }
+        .kpi-value { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text); position: relative; z-index: 1; }
+        .kpi-sub   { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; position: relative; z-index: 1; }
+
+        /* Main grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1.3fr 1fr;
@@ -364,29 +249,14 @@
             animation-fill-mode: forwards;
         }
         @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .main-grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-actions { width: 100%; justify-content: flex-start; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 500px) {
-            .kpi-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .btn {
-                font-size: 0.8rem;
-                padding: 8px 14px;
-            }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .btn { font-size: 0.8rem; padding: 8px 14px; }
         }
 
         .card {
@@ -395,7 +265,6 @@
             padding: 20px 22px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
-            transition: var(--transition);
         }
         .card-header {
             display: flex;
@@ -405,43 +274,21 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .card-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            letter-spacing: -0.2px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .card-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.2px; color: var(--text); }
         .card-badge {
             display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 700;
-            letter-spacing: 0.3px;
             text-transform: uppercase;
         }
-        .badge-live {
-            background: #dff5e8;
-            color: #3d8b5f;
-            animation: pulse 2.5s infinite;
-        }
+        .badge-live { background: #dff5e8; color: #3d8b5f; animation: pulse 2.5s infinite; }
 
-        .form-group {
-            margin-bottom: 13px;
-        }
-        .form-label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 5px;
-            letter-spacing: -0.1px;
-        }
-        .form-input,
-        .form-select {
+        /* Formulario */
+        .form-group { margin-bottom: 13px; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-light); margin-bottom: 5px; }
+        .form-input, .form-select {
             width: 100%;
             padding: 11px 14px;
             border-radius: 25px;
@@ -453,188 +300,79 @@
             color: var(--text);
             outline: none;
         }
-        .form-input:focus,
-        .form-select:focus {
-            border-color: var(--lavender);
-            box-shadow: 0 0 0 5px rgba(201, 184, 212, 0.15);
-            background: #fff;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        @media (max-width: 400px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
+        .form-input:focus, .form-select:focus { border-color: var(--lavender); box-shadow: 0 0 0 5px rgba(201,184,212,0.15); background: #fff; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width:400px) { .form-row { grid-template-columns: 1fr; } }
         .total-display {
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #6b5b7b;
-            padding: 10px;
-            background: var(--lavender-light);
-            border-radius: 25px;
-            letter-spacing: -0.3px;
+            text-align: center; font-size: 1.4rem; font-weight: 800;
+            color: #6b5b7b; padding: 10px;
+            background: var(--lavender-light); border-radius: 25px;
             transition: var(--transition);
         }
 
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius);
-            -webkit-overflow-scrolling: touch;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 650px;
-        }
-        table th {
-            text-align: left;
-            padding: 12px 14px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-lighter);
-            font-weight: 700;
-            border-bottom: 2px solid var(--border);
-            white-space: nowrap;
-        }
-        table td {
-            padding: 13px 14px;
-            font-size: 0.88rem;
-            border-bottom: 1px solid #f3f0f6;
-            white-space: nowrap;
-            transition: var(--transition);
-        }
-        table tbody tr {
-            transition: var(--transition);
-            border-radius: 8px;
-        }
-        table tbody tr:hover {
-            background: #fdfbff;
-        }
-        .empty-row td {
-            text-align: center;
-            color: var(--text-lighter);
-            padding: 40px;
-            font-style: italic;
-        }
-        .cat-tag {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 14px;
-            font-size: 0.73rem;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-        }
-        .cat-camisetas {
-            background: #e3effb;
-            color: #4a6d8c;
-        }
-        .cat-pantalones {
-            background: #e8ddf2;
-            color: #5e4a7a;
-        }
-        .cat-vestidos {
-            background: #fce8e8;
-            color: #8c4a5a;
-        }
-        .cat-chaquetas {
-            background: #fdf0e8;
-            color: #8c6a4a;
-        }
-        .cat-accesorios {
-            background: #dff5e8;
-            color: #3d6b4f;
-        }
+        /* Tabla */
+        .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
+        table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        table th { text-align: left; padding: 12px 14px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-lighter); font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        table td { padding: 13px 14px; font-size: 0.88rem; border-bottom: 1px solid #f3f0f6; white-space: nowrap; transition: var(--transition); }
+        table tbody tr:hover { background: #fdfbff; }
+        .empty-row td { text-align: center; color: var(--text-lighter); padding: 40px; font-style: italic; }
+        .cat-tag { display: inline-block; padding: 3px 10px; border-radius: 14px; font-size: 0.73rem; font-weight: 600; }
+        .cat-camisetas  { background: #e3effb; color: #4a6d8c; }
+        .cat-pantalones { background: #e8ddf2; color: #5e4a7a; }
+        .cat-vestidos   { background: #fce8e8; color: #8c4a5a; }
+        .cat-chaquetas  { background: #fdf0e8; color: #8c6a4a; }
+        .cat-accesorios { background: #dff5e8; color: #3d6b4f; }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 290px;
-        }
-        .chart-container canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
+        /* Gráfica */
+        .chart-container { position: relative; width: 100%; height: 290px; }
+        .chart-container canvas { width: 100% !important; height: 100% !important; }
 
+        /* Toast */
         .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #4a4458;
-            color: #fff;
-            padding: 12px 22px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+            position: fixed; bottom: 30px; right: 30px;
+            background: #4a4458; color: #fff;
+            padding: 12px 22px; border-radius: 30px;
+            font-weight: 600; font-size: 0.9rem;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2);
             z-index: 999;
             animation: scaleIn 0.3s ease, floatUp 0.5s ease 2s forwards;
             pointer-events: none;
-            letter-spacing: -0.1px;
         }
-        .toast.success {
-            background: #4a7d6a;
-        }
-        .toast.error {
-            background: #b55a5a;
-        }
+        .toast.success { background: #4a7d6a; }
+        .toast.error   { background: #b55a5a; }
 
-        ::-webkit-scrollbar {
-            height: 6px;
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d5cde0;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #c0b5d0;
-        }
+        #importFileInput { display: none; }
+        .row-new { animation: rowHighlight 1.2s ease; }
 
-        #importFileInput {
-            display: none;
-        }
-        .row-new {
-            animation: rowHighlight 1.2s ease;
-        }
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d5cde0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c0b5d0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Encabezado -->
         <header class="header">
             <div class="header-left">
                 <div class="logo-icon">👗</div>
                 <div>
-                    <h1>Boutique Pastel</h1>
+                    <h1>Noelu Ventas</h1>
                     <p class="header-subtitle">
-                        Control de ventas · Moda & Estilo
+                        Moda & Estilo
                         <span class="cloud-status" id="cloudStatus">
                             <span class="cloud-dot" id="cloudDot"></span>
-                            <span id="cloudLabel">Verificando...</span>
+                            <span id="cloudLabel">Verificando…</span>
                         </span>
                     </p>
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn btn-export" onclick="exportarJSON()" title="Exportar datos a JSON">
-                    <span class="btn-icon">📤</span> Exportar JSON
-                </button>
-                <button class="btn btn-import" onclick="document.getElementById('importFileInput').click()" title="Importar datos desde JSON">
-                    <span class="btn-icon">📥</span> Importar JSON
-                </button>
+                <button class="btn btn-export" onclick="exportarJSON()">📤 Exportar</button>
+                <button class="btn btn-import" onclick="document.getElementById('importFileInput').click()">📥 Importar</button>
                 <input type="file" id="importFileInput" accept=".json" onchange="importarJSON(event)">
-                <button class="btn btn-clear" onclick="limpiarDatos()" title="Eliminar todos los registros">
-                    <span class="btn-icon">🗑️</span> Limpiar
-                </button>
+                <button class="btn btn-clear" onclick="limpiarDatos()">🗑️ Limpiar</button>
             </div>
         </header>
 
@@ -662,9 +400,9 @@
             </div>
         </div>
 
-        <!-- Main: Gráfica + Formulario -->
+        <!-- Gráfica + Formulario -->
         <div class="main-grid">
-            <div class="card" style="animation: fadeInUp 0.6s ease forwards; animation-delay: 0.12s; opacity: 0; animation-fill-mode: forwards;">
+            <div class="card">
                 <div class="card-header">
                     <span class="card-title">📈 Crecimiento Diario</span>
                     <span class="card-badge badge-live">Últimos 7 días</span>
@@ -673,10 +411,8 @@
                     <canvas id="chartVentas"></canvas>
                 </div>
             </div>
-            <div class="card" style="animation: fadeInUp 0.6s ease forwards; animation-delay: 0.16s; opacity: 0; animation-fill-mode: forwards;">
-                <div class="card-header">
-                    <span class="card-title">🛍️ Nueva Venta</span>
-                </div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">🛍️ Nueva Venta</span></div>
                 <form id="formVenta" autocomplete="off">
                     <div class="form-group">
                         <label class="form-label" for="producto">Nombre del Producto</label>
@@ -709,15 +445,13 @@
                     <div class="form-group">
                         <div class="total-display" id="totalDisplay">Total: $0.00</div>
                     </div>
-                    <button type="submit" class="btn btn-add" style="width:100%;justify-content:center;">
-                        ✨ Registrar Venta
-                    </button>
+                    <button type="submit" class="btn btn-add" style="width:100%;justify-content:center;">✨ Registrar Venta</button>
                 </form>
             </div>
         </div>
 
-        <!-- Tabla de historial -->
-        <div class="card" style="animation: fadeInUp 0.6s ease forwards; animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;">
+        <!-- Historial -->
+        <div class="card">
             <div class="card-header">
                 <span class="card-title">📋 Historial de Ventas</span>
                 <span style="font-size:0.8rem;color:var(--text-lighter);" id="contadorRegistros">0 registros</span>
@@ -725,20 +459,10 @@
             <div class="table-wrapper">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Producto</th>
-                            <th>Categoría</th>
-                            <th>Precio</th>
-                            <th>Cant.</th>
-                            <th>Total</th>
-                            <th>Acción</th>
-                        </tr>
+                        <tr><th>Fecha</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cant.</th><th>Total</th><th>Acción</th></tr>
                     </thead>
                     <tbody id="tablaBody">
-                        <tr class="empty-row">
-                            <td colspan="7">🌸 Aún no hay ventas registradas. ¡Agrega tu primera venta!</td>
-                        </tr>
+                        <tr class="empty-row"><td colspan="7">🌸 Aún no hay ventas registradas. ¡Agrega tu primera venta!</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -749,14 +473,14 @@
 
     <script>
         (function() {
-            // ⚡ CONFIGURACIÓN: endpoint npoint.io
-            const NPOINT_URL = 'https://api.npoint.io/346f4e3989cfc4ab74ee';
+            // ⚡ CONFIGURACIÓN NPOINT
+            const NPOINT_URL = 'https://api.npoint.io/7127bb481d4a94c86c56';
+            const STORAGE_KEY = 'noelu_ventas_data';
 
-            const STORAGE_KEY = 'boutique_pastel_ventas';
             let ventas = [];
             let chartInstance = null;
 
-            // Elementos DOM
+            // DOM elements
             const formVenta = document.getElementById('formVenta');
             const inputProducto = document.getElementById('producto');
             const inputCategoria = document.getElementById('categoria');
@@ -768,7 +492,6 @@
             const contadorRegistros = document.getElementById('contadorRegistros');
             const importFileInput = document.getElementById('importFileInput');
 
-            // KPI elements
             const kpiHoy = document.getElementById('kpiHoy');
             const kpiHoyCant = document.getElementById('kpiHoyCant');
             const kpiAyer = document.getElementById('kpiAyer');
@@ -777,19 +500,15 @@
             const kpiSemanaCant = document.getElementById('kpiSemanaCant');
             const kpiTotalReg = document.getElementById('kpiTotalReg');
 
-            // Estado de nube
             const cloudDot = document.getElementById('cloudDot');
             const cloudLabel = document.getElementById('cloudLabel');
 
             function setCloudStatus(status, label) {
                 cloudDot.className = 'cloud-dot ' + status;
                 cloudLabel.textContent = label;
-                if (status === 'syncing') {
-                    cloudLabel.textContent = 'Sincronizando...';
-                }
             }
 
-            // ============ SINCRONIZACIÓN CON NUBE ============
+            // ============ SINCRONIZACIÓN NUBE ============
             async function sincronizarNube() {
                 setCloudStatus('syncing', 'Conectando...');
                 try {
@@ -797,18 +516,16 @@
                     if (!resp.ok) throw new Error('Respuesta no válida');
                     const data = await resp.json();
                     if (Array.isArray(data) && data.length > 0) {
-                        // La nube tiene datos: los usamos
                         ventas = data;
-                        guardarDatos(); // actualizar localStorage
+                        guardarDatos();
                         setCloudStatus('online', 'Conectado');
                         return true;
                     } else {
-                        // Nube vacía, mantenemos datos locales
                         setCloudStatus('online', 'Nube vacía');
                         return true;
                     }
                 } catch (e) {
-                    console.warn('⚠️ No se pudo conectar con la nube:', e.message);
+                    console.warn('Nube no disponible:', e.message);
                     setCloudStatus('offline', 'Sin conexión');
                     return false;
                 }
@@ -826,7 +543,7 @@
                     setCloudStatus('online', 'Conectado');
                     return true;
                 } catch (e) {
-                    console.error('Error al subir a nube:', e);
+                    console.error('Error al subir:', e);
                     setCloudStatus('offline', 'Error al guardar');
                     mostrarToast('⚠️ No se pudo sincronizar con la nube', 'error');
                     return false;
@@ -840,31 +557,20 @@
                     if (raw) {
                         ventas = JSON.parse(raw);
                         if (!Array.isArray(ventas)) ventas = [];
-                        ventas = ventas.filter(v =>
-                            v && typeof v === 'object' &&
-                            v.producto && v.precio !== undefined && v.cantidad !== undefined && v.fecha
-                        );
+                        ventas = ventas.filter(v => v && v.producto && v.precio != null && v.cantidad != null && v.fecha);
                     } else {
                         ventas = [];
                     }
-                } catch (e) {
-                    console.error('Error al cargar datos locales:', e);
-                    ventas = [];
-                }
+                } catch (e) { ventas = []; }
             }
 
             function guardarDatos() {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
-                } catch (e) {
-                    console.error('Error al guardar en localStorage:', e);
-                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
             }
 
             // ============ CRUD ============
             async function handleSubmitVenta(e) {
                 e.preventDefault();
-
                 const producto = inputProducto.value.trim();
                 const categoria = inputCategoria.value;
                 const precio = parseFloat(inputPrecio.value);
@@ -872,7 +578,7 @@
                 const fecha = inputFecha.value;
 
                 if (!producto || isNaN(precio) || precio <= 0 || isNaN(cantidad) || cantidad <= 0 || !fecha) {
-                    mostrarToast('⚠️ Por favor completa todos los campos correctamente.', 'error');
+                    mostrarToast('⚠️ Completa todos los campos correctamente.', 'error');
                     return;
                 }
 
@@ -883,7 +589,7 @@
                     precio,
                     cantidad,
                     total: Math.round(precio * cantidad * 100) / 100,
-                    fecha,
+                    fecha
                 };
 
                 ventas.unshift(nuevaVenta);
@@ -902,7 +608,7 @@
             }
 
             async function eliminarVenta(id) {
-                if (!confirm('¿Estás seguro de eliminar esta venta? Esta acción no se puede deshacer.')) return;
+                if (!confirm('¿Eliminar esta venta?')) return;
                 ventas = ventas.filter(v => v.id !== id);
                 guardarDatos();
                 await subirANube();
@@ -913,48 +619,35 @@
             }
 
             async function limpiarDatos() {
-                if (ventas.length === 0) {
-                    mostrarToast('No hay datos para limpiar.', 'error');
-                    return;
-                }
-                if (!confirm(
-                        `⚠️ ¿Eliminar TODOS los registros (${ventas.length} ventas)?\n\nEsta acción no se puede deshacer. Recomendamos exportar primero.`
-                        )) return;
+                if (ventas.length === 0) { mostrarToast('No hay datos.', 'error'); return; }
+                if (!confirm(`¿Eliminar TODOS los registros (${ventas.length})?`)) return;
                 ventas = [];
                 guardarDatos();
                 await subirANube();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
-                mostrarToast('🧹 Todos los registros han sido eliminados.', 'error');
+                mostrarToast('🧹 Todos los registros eliminados.', 'error');
             }
 
-            // ============ RENDERIZADO ============
-            function renderizarTabla(highlightFirst = false) {
+            // ============ RENDER ============
+            function renderizarTabla(highlight = false) {
                 if (ventas.length === 0) {
-                    tablaBody.innerHTML = `
-                        <tr class="empty-row">
-                            <td colspan="7">🌸 Aún no hay ventas registradas. ¡Agrega tu primera venta!</td>
-                        </tr>`;
+                    tablaBody.innerHTML = `<tr class="empty-row"><td colspan="7">🌸 Aún no hay ventas registradas.</td></tr>`;
                 } else {
-                    tablaBody.innerHTML = ventas.map((v, index) => {
+                    tablaBody.innerHTML = ventas.map((v, i) => {
                         const catClass = `cat-${v.categoria}`;
                         const catLabel = v.categoria.charAt(0).toUpperCase() + v.categoria.slice(1);
-                        const rowClass = (highlightFirst && index === 0) ? ' row-new' : '';
-                        return `
-                            <tr class="${rowClass}">
-                                <td>${formatearFecha(v.fecha)}</td>
-                                <td><strong>${escaparHTML(v.producto)}</strong></td>
-                                <td><span class="cat-tag ${catClass}">${catLabel}</span></td>
-                                <td>$${v.precio.toFixed(2)}</td>
-                                <td>${v.cantidad}</td>
-                                <td><strong>$${v.total.toFixed(2)}</strong></td>
-                                <td>
-                                    <button class="btn btn-delete" onclick="eliminarVenta(${v.id})" title="Eliminar">
-                                        ✕
-                                    </button>
-                                </td>
-                            </tr>`;
+                        const rowClass = (highlight && i === 0) ? 'row-new' : '';
+                        return `<tr class="${rowClass}">
+                            <td>${formatearFecha(v.fecha)}</td>
+                            <td><strong>${escaparHTML(v.producto)}</strong></td>
+                            <td><span class="cat-tag ${catClass}">${catLabel}</span></td>
+                            <td>$${v.precio.toFixed(2)}</td>
+                            <td>${v.cantidad}</td>
+                            <td><strong>$${v.total.toFixed(2)}</strong></td>
+                            <td><button class="btn btn-delete" onclick="eliminarVenta(${v.id})">✕</button></td>
+                        </tr>`;
                     }).join('');
                 }
                 contadorRegistros.textContent = `${ventas.length} registro${ventas.length !== 1 ? 's' : ''}`;
@@ -972,75 +665,64 @@
             // ============ KPIs ============
             function actualizarKPIs() {
                 const hoy = new Date().toISOString().split('T')[0];
-                const ayerDate = new Date();
-                ayerDate.setDate(ayerDate.getDate() - 1);
+                const ayerDate = new Date(); ayerDate.setDate(ayerDate.getDate()-1);
                 const ayer = ayerDate.toISOString().split('T')[0];
 
-                const ventasHoy = ventas.filter(v => v.fecha === hoy);
-                const totalHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
-                const cantHoy = ventasHoy.reduce((sum, v) => sum + v.cantidad, 0);
+                const vHoy = ventas.filter(v => v.fecha === hoy);
+                const totalHoy = vHoy.reduce((s,v) => s+v.total,0);
+                const cantHoy = vHoy.reduce((s,v) => s+v.cantidad,0);
 
-                const ventasAyer = ventas.filter(v => v.fecha === ayer);
-                const totalAyer = ventasAyer.reduce((sum, v) => sum + v.total, 0);
-                const cantAyer = ventasAyer.reduce((sum, v) => sum + v.cantidad, 0);
+                const vAyer = ventas.filter(v => v.fecha === ayer);
+                const totalAyer = vAyer.reduce((s,v) => s+v.total,0);
+                const cantAyer = vAyer.reduce((s,v) => s+v.cantidad,0);
 
-                const fechas7d = generarUltimos7Dias();
-                const ventas7d = ventas.filter(v => fechas7d.includes(v.fecha));
-                const total7d = ventas7d.reduce((sum, v) => sum + v.total, 0);
-                const cant7d = ventas7d.reduce((sum, v) => sum + v.cantidad, 0);
+                const fechas7 = generarUltimos7Dias();
+                const v7 = ventas.filter(v => fechas7.includes(v.fecha));
+                const total7 = v7.reduce((s,v) => s+v.total,0);
+                const cant7 = v7.reduce((s,v) => s+v.cantidad,0);
 
                 kpiHoy.textContent = `$${totalHoy.toFixed(2)}`;
                 kpiHoyCant.textContent = `${cantHoy} producto${cantHoy !== 1 ? 's' : ''}`;
                 kpiAyer.textContent = `$${totalAyer.toFixed(2)}`;
                 kpiAyerCant.textContent = `${cantAyer} producto${cantAyer !== 1 ? 's' : ''}`;
-                kpiSemana.textContent = `$${total7d.toFixed(2)}`;
-                kpiSemanaCant.textContent = `${cant7d} producto${cant7d !== 1 ? 's' : ''}`;
+                kpiSemana.textContent = `$${total7.toFixed(2)}`;
+                kpiSemanaCant.textContent = `${cant7} producto${cant7 !== 1 ? 's' : ''}`;
                 kpiTotalReg.textContent = ventas.length;
             }
 
             // ============ GRÁFICA ============
             function generarUltimos7Dias() {
                 const fechas = [];
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date();
-                    d.setDate(d.getDate() - i);
+                for (let i=6; i>=0; i--) {
+                    const d = new Date(); d.setDate(d.getDate()-i);
                     fechas.push(d.toISOString().split('T')[0]);
                 }
                 return fechas;
             }
 
-            function formatearFechaLabel(fechaStr) {
-                const partes = fechaStr.split('-');
-                const d = new Date(partes[0], partes[1] - 1, partes[2]);
-                const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-                const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                const hoy = new Date();
-                const ayer = new Date();
-                ayer.setDate(ayer.getDate() - 1);
-                const hoyStr = hoy.toISOString().split('T')[0];
-                const ayerStr = ayer.toISOString().split('T')[0];
-                if (fechaStr === hoyStr) return 'Hoy';
-                if (fechaStr === ayerStr) return 'Ayer';
-                return `${diasSemana[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
+            function formatearFechaLabel(f) {
+                const [y,m,d] = f.split('-');
+                const date = new Date(y, m-1, d);
+                const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                const hoy = new Date().toISOString().split('T')[0];
+                const ayer = new Date(Date.now()-86400000).toISOString().split('T')[0];
+                if (f === hoy) return 'Hoy';
+                if (f === ayer) return 'Ayer';
+                return `${dias[date.getDay()]} ${d} ${meses[date.getMonth()]}`;
             }
 
             function renderizarGrafica() {
                 const ctx = document.getElementById('chartVentas').getContext('2d');
-                if (chartInstance) {
-                    chartInstance.destroy();
-                    chartInstance = null;
-                }
+                if (chartInstance) chartInstance.destroy();
+                const fechas = generarUltimos7Dias();
+                const labels = fechas.map(formatearFechaLabel);
+                const data = fechas.map(f => ventas.filter(v => v.fecha===f).reduce((s,v)=>s+v.total,0));
 
-                const fechas7d = generarUltimos7Dias();
-                const labels = fechas7d.map(f => formatearFechaLabel(f));
-                const data = fechas7d.map(fecha => {
-                    return ventas.filter(v => v.fecha === fecha).reduce((sum, v) => sum + v.total, 0);
-                });
-
-                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(201, 184, 212, 0.45)');
-                gradient.addColorStop(0.5, 'rgba(201, 184, 212, 0.15)');
-                gradient.addColorStop(1, 'rgba(201, 184, 212, 0.01)');
+                const gradient = ctx.createLinearGradient(0,0,0,300);
+                gradient.addColorStop(0, 'rgba(201,184,212,0.45)');
+                gradient.addColorStop(0.5, 'rgba(201,184,212,0.15)');
+                gradient.addColorStop(1, 'rgba(201,184,212,0.01)');
 
                 chartInstance = new Chart(ctx, {
                     type: 'line',
@@ -1056,65 +738,41 @@
                             tension: 0.45,
                             pointRadius: 5,
                             pointHoverRadius: 9,
-                            pointBackgroundColor: '#ffffff',
+                            pointBackgroundColor: '#fff',
                             pointBorderColor: '#9b7db8',
                             pointBorderWidth: 2.5,
                             pointHoverBackgroundColor: '#9b7db8',
-                            pointHoverBorderColor: '#ffffff',
+                            pointHoverBorderColor: '#fff',
                             pointHoverBorderWidth: 3,
-                            hitRadius: 25,
-                        }],
+                            hitRadius: 25
+                        }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         animation: { duration: 1000, easing: 'easeInOutQuart' },
                         plugins: {
-                            legend: {
-                                labels: {
-                                    usePointStyle: true,
-                                    pointStyleWidth: 10,
-                                    pointStyleHeight: 10,
-                                    padding: 20,
-                                    font: { size: 12, weight: '600', family: "'Segoe UI', system-ui, sans-serif" },
-                                    color: '#7a7488',
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: '#4a4458',
-                                titleFont: { size: 13, weight: '700' },
-                                bodyFont: { size: 12 },
-                                padding: 14,
-                                cornerRadius: 14,
-                                displayColors: false,
-                                callbacks: { label: (ctx) => ` $${ctx.parsed.y.toFixed(2)}` }
-                            }
+                            legend: { labels: { usePointStyle: true, pointStyleWidth:10, pointStyleHeight:10, padding:20, font:{size:12,weight:'600'}, color:'#7a7488' } },
+                            tooltip: { backgroundColor:'#4a4458', titleFont:{size:13,weight:'700'}, bodyFont:{size:12}, padding:14, cornerRadius:14, displayColors:false, callbacks:{label:(ctx)=>` $${ctx.parsed.y.toFixed(2)}`} }
                         },
                         scales: {
-                            x: { grid: { display: false }, ticks: { color: '#a098b0' }, border: { color: '#e8e3ed' } },
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: '#f3f0f6' },
-                                ticks: { color: '#a098b0', callback: v => '$' + v },
-                                border: { display: false }
-                            }
+                            x: { grid:{display:false}, ticks:{color:'#a098b0'}, border:{color:'#e8e3ed'} },
+                            y: { beginAtZero:true, grid:{color:'#f3f0f6'}, ticks:{color:'#a098b0', callback:v=>'$'+v} }
                         },
-                        interaction: { intersect: false, mode: 'index' }
+                        interaction: { intersect:false, mode:'index' }
                     }
                 });
             }
 
-            // ============ EXPORTAR / IMPORTAR JSON ============
+            // ============ EXPORT / IMPORT ============
             function exportarJSON() {
-                if (ventas.length === 0) { mostrarToast('⚠️ No hay datos para exportar.', 'error'); return; }
-                const blob = new Blob([JSON.stringify(ventas, null, 2)], { type: 'application/json' });
+                if (!ventas.length) { mostrarToast('⚠️ Sin datos para exportar.', 'error'); return; }
+                const blob = new Blob([JSON.stringify(ventas,null,2)], {type:'application/json'});
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
-                a.download = `ventas_boutique_${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                mostrarToast(`📤 Exportado: ${ventas.length} registros.`, 'success');
+                a.download = `noelu_ventas_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                mostrarToast(`📤 Exportados ${ventas.length} registros.`, 'success');
             }
 
             function importarJSON(event) {
@@ -1124,81 +782,68 @@
                 reader.onload = async function(e) {
                     try {
                         const data = JSON.parse(e.target.result);
-                        if (!Array.isArray(data)) throw new Error('El JSON debe ser un array.');
-                        const validados = data.filter(v =>
-                            v && v.producto && v.precio !== undefined && v.cantidad !== undefined && v.fecha
-                        );
-                        if (validados.length === 0) throw new Error('Sin registros válidos.');
-                        if (!confirm(`¿Reemplazar con ${validados.length} registros?`)) return;
-                        ventas = validados.map(v => ({
-                            ...v,
-                            id: v.id || Date.now() + Math.random() * 10000,
-                            total: v.total || Math.round(v.precio * v.cantidad * 100) / 100,
-                            categoria: v.categoria || 'camisetas'
-                        }));
+                        if (!Array.isArray(data)) throw new Error('Formato inválido.');
+                        const valid = data.filter(v=>v&&v.producto&&v.precio!=null&&v.cantidad!=null&&v.fecha);
+                        if (!valid.length) throw new Error('Sin registros válidos.');
+                        if (!confirm(`¿Reemplazar con ${valid.length} registros?`)) return;
+                        ventas = valid.map(v=>({...v, id:v.id||Date.now(), total:v.total||Math.round(v.precio*v.cantidad*100)/100, categoria:v.categoria||'camisetas'}));
                         guardarDatos();
                         await subirANube();
                         renderizarTabla();
                         actualizarKPIs();
                         renderizarGrafica();
-                        mostrarToast(`📥 Importados ${ventas.length} registros.`, 'success');
-                    } catch (err) {
-                        mostrarToast('❌ ' + err.message, 'error');
-                    }
+                        mostrarToast(`📥 ${ventas.length} registros importados.`, 'success');
+                    } catch(err) { mostrarToast('❌ '+err.message, 'error'); }
                 };
                 reader.readAsText(file);
                 importFileInput.value = '';
             }
 
-            // ============ UTILIDADES ============
-            function formatearFecha(fechaStr) {
-                const [y, m, d] = fechaStr.split('-');
-                const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            function formatearFecha(f) {
+                const [y,m,d] = f.split('-');
+                const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
                 return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
             }
 
-            function escaparHTML(str) {
+            function escaparHTML(s) {
                 const div = document.createElement('div');
-                div.textContent = str;
+                div.textContent = s;
                 return div.innerHTML;
             }
 
-            function mostrarToast(mensaje, tipo = 'success') {
+            function mostrarToast(msg, tipo='success') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = `toast ${tipo}`;
-                toast.textContent = mensaje;
+                toast.textContent = msg;
                 container.appendChild(toast);
                 setTimeout(() => toast.remove(), 2600);
             }
 
-            // ============ INICIALIZACIÓN ============
+            // ============ INICIO ============
             async function init() {
-                cargarDatos(); // carga inicial desde localStorage
+                cargarDatos();
                 inputFecha.value = new Date().toISOString().split('T')[0];
-                inputFecha.setAttribute('max', new Date().toISOString().split('T')[0]);
+                inputFecha.setAttribute('max', inputFecha.value);
                 actualizarTotalDisplay();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
-                setupEventListeners();
+                setupListeners();
 
-                // Intentar sincronizar con la nube después de mostrar interfaz
                 await sincronizarNube();
-                // Refrescar UI si la nube trajo datos diferentes
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
             }
 
-            function setupEventListeners() {
+            function setupListeners() {
                 formVenta.addEventListener('submit', handleSubmitVenta);
                 inputPrecio.addEventListener('input', actualizarTotalDisplay);
                 inputCantidad.addEventListener('input', actualizarTotalDisplay);
-                importFileInput.addEventListener('click', () => importFileInput.value = '');
+                importFileInput.addEventListener('click', ()=> importFileInput.value='');
             }
 
-            // Exponer funciones globales
             window.eliminarVenta = eliminarVenta;
             window.exportarJSON = exportarJSON;
             window.importarJSON = importarJSON;
@@ -1206,13 +851,8 @@
 
             init();
 
-            // Refresco periódico de KPIs y gráfica (cada 60s)
-            setInterval(() => {
-                actualizarKPIs();
-                renderizarGrafica();
-            }, 60000);
-
-            console.log('🌸 Boutique Pastel con sincronización en nube (npoint.io)');
+            setInterval(() => { actualizarKPIs(); renderizarGrafica(); }, 60000);
+            console.log('🌸 Noelu Ventas – npoint.io sincronizado');
             console.log('🔗 Endpoint:', NPOINT_URL);
         })();
     </script>
