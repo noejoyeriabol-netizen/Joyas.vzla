@@ -3,7 +3,7 @@ name: 🔷 Generar APK - Noelu Ventas
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:   # permite ejecutarlo manualmente desde Actions
+  workflow_dispatch:   # permite disparo manual
 
 jobs:
   build-apk:
@@ -26,10 +26,13 @@ jobs:
       - name: 🤖 Configurar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: 📦 Instalar Capacitor CLI
-        run: npm install -g @capacitor/cli
+      - name: 📄 Crear package.json temporal
+        run: npm init -y
 
-      - name: 🛠️ Crear proyecto Capacitor y agregar Android
+      - name: 📦 Instalar dependencias de Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: 🛠️ Inicializar Capacitor y agregar Android
         run: |
           npx cap init "Noelu Ventas" "com.noelu.ventas" --web-dir=www
           npx cap add android
