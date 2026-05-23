@@ -483,26 +483,46 @@
             }
 
             async function limpiarDatos() {
-                if (ventas.length === 0) { mostrarToast('No hay datos.', 'error'); return; }
-                if (!confirm(`¿Eliminar TODOS los registros (${ventas.length})?`)) return;
+                if (ventas.length === 0) { 
+                    mostrarToast('No hay datos para limpiar.', 'error'); 
+                    return; 
+                }
                 
-                const idsParaBorrar = ventas.map(v => v.id);
+                // 1. Pedir el código de confirmación al usuario
+                const codigo = prompt(`⚠️ ATENCIÓN: Vas a eliminar TODOS los registros de forma permanente.\n\nPara confirmar, ingresa el código de seguridad:`);
+
+                // 2. Validar que el código sea exactamente 0312
+                if (codigo !== '0312') {
+                    if (codigo !== null) { // Si no canceló el prompt manualmente
+                        mostrarToast('❌ Código incorrecto. Operación cancelada.', 'error');
+                    }
+                    return; // Salir de la función sin borrar nada
+                }
+
+                // 3. Borrar todo en local y actualizar la interfaz gráfica
                 ventas = [];
                 guardarDatos();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
 
-                // Borrar en masa directo en la nube
-                setCloudStatus('syncing', 'Limpiando...');
+                // 4. Borrar en masa directo en la nube (Supabase)
+                setCloudStatus('syncing', 'Limpiando base de datos...');
                 try {
-                    await supabase.from('ventas').delete().in('id', idsParaBorrar);
+                    // Al usar .gt('id', 0) le decimos a Supabase que borre todos los registros 
+                    // cuyo ID sea mayor a 0 (es decir, absolutamente todos, ya que usas Date.now()).
+                    // Esto es mucho más seguro y eficiente que pasar un Array con miles de IDs.
+                    const { error } = await supabase.from('ventas').delete().gt('id', 0);
+                    
+                    if (error) throw error;
+                    
                     setCloudStatus('online', 'Conectado (vacía)');
+                    mostrarToast('🧹 Base de datos formateada con éxito.', 'success');
                 } catch(e) {
+                    console.error('Error al borrar la base de datos:', e);
                     setCloudStatus('offline', 'Error al limpiar');
+                    mostrarToast('⚠️ Error al limpiar en la nube, pero se limpió localmente.', 'error');
                 }
-
-                mostrarToast('🧹 Todos los registros eliminados.', 'error');
             }
 
             // ============ RENDER ============
