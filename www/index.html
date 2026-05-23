@@ -101,7 +101,6 @@
         .btn-delete:hover { background: #f8d4d4; box-shadow: 0 3px 10px rgba(200, 100, 100, 0.2); }
         .btn-clear { background: #fef0f0; color: #b55a5a; font-size: 0.82rem; padding: 8px 14px; border-radius: 22px; }
         .btn-clear:hover { background: #fde0e0; box-shadow: 0 3px 12px rgba(200, 120, 120, 0.25); }
-        .btn-icon { font-size: 1.1rem; }
 
         .kpi-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
@@ -176,7 +175,7 @@
         .toast {
             position: fixed; bottom: 30px; right: 30px; background: #4a4458; color: #fff;
             padding: 12px 22px; border-radius: 30px; font-weight: 600; font-size: 0.9rem;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.2); z-index: 999;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.2); z-index: 10000;
             animation: scaleIn 0.3s ease, floatUp 0.5s ease 2s forwards; pointer-events: none;
         }
         .toast.success { background: #4a7d6a; }
@@ -184,6 +183,43 @@
 
         #importFileInput { display: none; }
         .row-new { animation: rowHighlight 1.2s ease; }
+
+        /* ================= ESTILOS DEL MODAL ELEGANTE ================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(74, 68, 88, 0.4); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9000; opacity: 0; pointer-events: none; transition: var(--transition);
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-box {
+            background: var(--card); padding: 32px 28px; border-radius: var(--radius-lg);
+            width: 90%; max-width: 380px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transform: scale(0.9) translateY(20px); transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        
+        .modal-icon {
+            font-size: 3rem; margin-bottom: 12px;
+            display: inline-block; filter: drop-shadow(0 4px 6px rgba(181, 90, 90, 0.2));
+        }
+        .modal-title { font-size: 1.3rem; color: var(--text); margin-bottom: 10px; font-weight: 700; letter-spacing: -0.3px; }
+        .modal-text { font-size: 0.9rem; color: var(--text-light); margin-bottom: 24px; line-height: 1.5; }
+        
+        .modal-input {
+            text-align: center; font-size: 1.4rem; letter-spacing: 12px; font-family: monospace;
+            padding: 12px; font-weight: bold; color: var(--text); background: var(--bg);
+            border: 2px solid var(--border); border-radius: 16px; margin-bottom: 24px; width: 80%;
+            outline: none; transition: var(--transition);
+        }
+        .modal-input:focus { border-color: var(--rose); box-shadow: 0 0 0 4px rgba(240, 196, 196, 0.3); background: #fff; }
+        
+        .modal-actions { display: flex; gap: 12px; justify-content: center; }
+        .modal-actions .btn { padding: 12px 20px; flex: 1; justify-content: center; font-size: 0.95rem; }
+        .btn-cancel { background: #f3f0f6; color: var(--text-light); }
+        .btn-cancel:hover { background: #e8e3ed; transform: translateY(-2px); }
 
         ::-webkit-scrollbar { height: 6px; width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -211,7 +247,7 @@
                 <button class="btn btn-export" onclick="exportarJSON()">📤 Exportar</button>
                 <button class="btn btn-import" onclick="document.getElementById('importFileInput').click()">📥 Importar</button>
                 <input type="file" id="importFileInput" accept=".json" onchange="importarJSON(event)">
-                <button class="btn btn-clear" onclick="limpiarDatos()">🗑️ Limpiar</button>
+                <button class="btn btn-clear" onclick="abrirModalLimpiar()">🗑️ Limpiar</button>
             </div>
         </header>
 
@@ -301,6 +337,21 @@
         </div>
     </div>
 
+    <div id="modalLimpiar" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">⚠️</div>
+            <h3 class="modal-title">¿Borrar todos los datos?</h3>
+            <p class="modal-text">Esta acción formateará tu base de datos y eliminará <strong>todos</strong> los registros de forma permanente.</p>
+            
+            <input type="password" id="inputCodigoAdmin" class="modal-input" placeholder="****" maxlength="4" autocomplete="off">
+            
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="cerrarModalLimpiar()">Cancelar</button>
+                <button class="btn btn-delete" onclick="confirmarLimpiar()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toastContainer"></div>
 
     <script>
@@ -337,6 +388,10 @@
 
             const cloudDot = document.getElementById('cloudDot');
             const cloudLabel = document.getElementById('cloudLabel');
+            
+            // MODAL DOM
+            const modalLimpiar = document.getElementById('modalLimpiar');
+            const inputCodigoAdmin = document.getElementById('inputCodigoAdmin');
 
             function setCloudStatus(status, label) {
                 cloudDot.className = 'cloud-dot ' + status;
@@ -344,8 +399,6 @@
             }
 
             // ============ SINCRONIZACIÓN SUPABASE (SEGURA) ============
-            
-            // Descarga los datos de la nube al iniciar
             async function sincronizarNube() {
                 setCloudStatus('syncing', 'Conectando...');
                 try {
@@ -375,12 +428,10 @@
                 }
             }
 
-            // Sube todo masivamente (Usado principalmente al importar un JSON)
             async function subirANube() {
                 if (ventas.length === 0) return;
                 setCloudStatus('syncing', 'Guardando...');
                 try {
-                    // upsert actualiza o inserta, pero NUNCA borra, lo cual protege tus datos
                     const { error } = await supabase.from('ventas').upsert(ventas);
                     if (error) throw error;
                     setCloudStatus('online', 'Conectado');
@@ -470,7 +521,7 @@
                 actualizarKPIs();
                 renderizarGrafica();
 
-                // Borrar directo en la nube individualmente
+                // Borrar directo en la nube
                 setCloudStatus('syncing', 'Borrando...');
                 try {
                     await supabase.from('ventas').delete().eq('id', id);
@@ -482,36 +533,45 @@
                 mostrarToast('🗑️ Venta eliminada.', 'error');
             }
 
-            async function limpiarDatos() {
-                if (ventas.length === 0) { 
-                    mostrarToast('No hay datos para limpiar.', 'error'); 
+            // ============ LÓGICA DEL MODAL DE LIMPIEZA ============
+            function abrirModalLimpiar() {
+                if (ventas.length === 0) {
+                    mostrarToast('No hay datos para limpiar.', 'error');
+                    return;
+                }
+                inputCodigoAdmin.value = ''; // Limpiar el input
+                modalLimpiar.classList.add('active'); // Mostrar el modal
+                setTimeout(() => inputCodigoAdmin.focus(), 100); // Darle foco para escribir rápido
+            }
+
+            function cerrarModalLimpiar() {
+                modalLimpiar.classList.remove('active'); // Ocultar el modal
+                inputCodigoAdmin.value = '';
+            }
+
+            async function confirmarLimpiar() {
+                const codigo = inputCodigoAdmin.value;
+                
+                if (codigo !== '0312') {
+                    mostrarToast('❌ Código incorrecto.', 'error');
+                    // Agregamos un pequeño efecto visual de error al input
+                    inputCodigoAdmin.style.borderColor = '#b55a5a';
+                    setTimeout(() => inputCodigoAdmin.style.borderColor = 'var(--border)', 1000);
                     return; 
                 }
-                
-                // 1. Pedir el código de confirmación al usuario
-                const codigo = prompt(`⚠️ ATENCIÓN: Vas a eliminar TODOS los registros de forma permanente.\n\nPara confirmar, ingresa el código de seguridad:`);
 
-                // 2. Validar que el código sea exactamente 0312
-                if (codigo !== '0312') {
-                    if (codigo !== null) { // Si no canceló el prompt manualmente
-                        mostrarToast('❌ Código incorrecto. Operación cancelada.', 'error');
-                    }
-                    return; // Salir de la función sin borrar nada
-                }
+                cerrarModalLimpiar();
 
-                // 3. Borrar todo en local y actualizar la interfaz gráfica
+                // 1. Borrar todo en local y actualizar interfaz
                 ventas = [];
                 guardarDatos();
                 renderizarTabla();
                 actualizarKPIs();
                 renderizarGrafica();
 
-                // 4. Borrar en masa directo en la nube (Supabase)
-                setCloudStatus('syncing', 'Limpiando base de datos...');
+                // 2. Borrar masivamente en Supabase
+                setCloudStatus('syncing', 'Limpiando nube...');
                 try {
-                    // Al usar .gt('id', 0) le decimos a Supabase que borre todos los registros 
-                    // cuyo ID sea mayor a 0 (es decir, absolutamente todos, ya que usas Date.now()).
-                    // Esto es mucho más seguro y eficiente que pasar un Array con miles de IDs.
                     const { error } = await supabase.from('ventas').delete().gt('id', 0);
                     
                     if (error) throw error;
@@ -690,7 +750,6 @@
                         renderizarGrafica();
                         mostrarToast(`📥 ${ventas.length} registros importados.`, 'success');
 
-                        // Subimos la data importada a Supabase
                         await subirANube();
 
                     } catch(err) { mostrarToast('❌ '+err.message, 'error'); }
@@ -742,17 +801,25 @@
                 inputPrecio.addEventListener('input', actualizarTotalDisplay);
                 inputCantidad.addEventListener('input', actualizarTotalDisplay);
                 importFileInput.addEventListener('click', ()=> importFileInput.value='');
+                
+                // Permitir confirmar el modal presionando "Enter"
+                inputCodigoAdmin.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') confirmarLimpiar();
+                });
             }
 
+            // Exponer funciones globales al HTML
             window.eliminarVenta = eliminarVenta;
             window.exportarJSON = exportarJSON;
             window.importarJSON = importarJSON;
-            window.limpiarDatos = limpiarDatos;
+            window.abrirModalLimpiar = abrirModalLimpiar;
+            window.cerrarModalLimpiar = cerrarModalLimpiar;
+            window.confirmarLimpiar = confirmarLimpiar;
 
             init();
 
             setInterval(() => { actualizarKPIs(); renderizarGrafica(); }, 60000);
-            console.log('🌸 Noelu Ventas – Supabase sincronizado (Seguro)');
+            console.log('🌸 Noelu Ventas – Modal de seguridad activado');
         })();
     </script>
 </body>
